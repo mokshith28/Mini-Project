@@ -8,29 +8,51 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   </head>
   <body>
-    <div class="array-container"></div>
+    <div class="viewport">
+      <div class="array-container"></div>
+      <div class="index-container"></div>
+    </div>
 
     <div class="progress-bar-container">
       <div class="progress-bar"></div>
     </div>
 
     <div class="btn-container">
-      <label for="speedControl"></label>
-      <select id="speedControl" class="speedControl">
-        <option value="0.5">0.5x</option>
-        <option value="1" selected>1x</option>
-        <option value="2">2x</option>
-        <option value="3">3x</option>
-      </select>
+      <div class="media-controls">
+        <label for="speed-control"></label>
+        <select id="speed-control" class="speed-control">
+          <option value="0.5">0.5x</option>
+          <option value="1" selected>1x</option>
+          <option value="2">2x</option>
+          <option value="3">3x</option>
+          <option value="5">5x</option>
+          <option value="10">10x</option>
+        </select>
 
-      <button class="reverse">Reverse</button>
-      <button class="play">Play</button>
-      <button class="pause">Pause</button>
-      <button class="restart">Restart</button>
+        <button class="reverse">Reverse</button>
+        <button class="play">Play</button>
+        <button class="pause">Pause</button>
+        <button class="restart">Reset</button>
+      </div>
+      <div class="array-controls">
+        <div class="array-size-control">
+          <label class="size-lable" for="n-slider">Size:</label>
+          <input
+            type="range"
+            min="2"
+            max="30"
+            value="8"
+            id="n-slider"
+            class="n-slider"
+          />
+          <span class="array-size-value">8</span>
+        </div>
+        <button class="randomize">Randomize</button>
+      </div>
     </div>
 
     <div class="copyright">&copy; 2024 MissionMangal2</div>
 
-    <script <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="script.js"></script>
   </body>
 </html>

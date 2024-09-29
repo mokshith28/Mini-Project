@@ -1,95 +1,152 @@
+const indexContainer = document.getElementsByClassName("index-container")[0];
 const arrayContainer = document.getElementsByClassName("array-container")[0];
 
 const progressBar = document.getElementsByClassName("progress-bar")[0];
-const speedControl = document.getElementsByClassName("speedControl")[0];
+const speedControl = document.getElementsByClassName("speed-control")[0];
 const playBtn = document.getElementsByClassName("play")[0];
 const pauseBtn = document.getElementsByClassName("pause")[0];
 const reverseBtn = document.getElementsByClassName("reverse")[0];
 const restartBtn = document.getElementsByClassName("restart")[0];
+const nSlider = document.getElementsByClassName("n-slider")[0];
+const nValue = document.getElementsByClassName("array-size-value")[0];
+const randomizeBtn = document.getElementsByClassName("randomize")[0];
 
-const myArray = [5, 3, 1, 6, 4, 2];
+let myArray = [];
+let maxArrayValue = Math.max(...myArray);
+const maxBarHeight = 250;
 
-// Render Array
-arrayContainer.innerHTML = "";
-myArray.forEach((value) => {
-  const bar = document.createElement("div");
-  bar.classList.add("bar");
-  bar.style.height = `${value * 20}px`;
-  bar.textContent = value;
-  arrayContainer.appendChild(bar);
-});
+// Helper Functions
+function generateRandomArray(size) {
+  return Array.from({ length: size }, () => Math.floor(Math.random() * 100));
+}
 
-// Get the bars
-const bars = document.querySelectorAll(".bar");
+function renderBars() {
+  arrayContainer.innerHTML = "";
+  indexContainer.innerHTML = "";
+  myArray.forEach((value, i) => {
+    const bar = document.createElement("div");
+    bar.classList.add("bar");
+
+    maxArrayValue = Math.max(...myArray);
+    const barHeight = (value / maxArrayValue) * maxBarHeight;
+    bar.style.height = `${barHeight}px`;
+
+    const barValue = document.createElement("div");
+    barValue.classList.add("value");
+    barValue.textContent = value;
+
+    const barIndex = document.createElement("div");
+    barIndex.classList.add("index");
+    barIndex.textContent = i;
+
+    bar.appendChild(barValue);
+    arrayContainer.appendChild(bar);
+    indexContainer.appendChild(barIndex);
+  });
+}
+
+// Renders the Array
+myArray = generateRandomArray(nSlider.value);
+renderBars();
 
 // Create Timeline
-const t1 = gsap.timeline({
+let tl = gsap.timeline({
   paused: true,
   defaults: { duration: 0.5 },
-  onComplete: () => console.log("Completed"),
-  onReverseComplete: () => console.log("Reverse Completed"),
-  onUpdate: () => (progressBar.style.width = t1.progress() * 100 + "%"),
+  onUpdate: () => (progressBar.style.width = tl.progress() * 100 + "%"),
 });
 
-// Bubble Sort
-for (let i = 0; i < myArray.length - 1; i++) {
-  for (let j = 0; j < myArray.length - i - 1; j++) {
-    // Select two bars
-    t1.to(bars[j], { backgroundColor: "#d1507b", duration: 0.25 }, ">");
-    t1.to(bars[j + 1], { backgroundColor: "#d1507b", duration: 0.25 }, "<");
-    t1.add("beforeSwap");
+// Bubble Sortarr
+function bubbleSort(arr) {
+  // Get the bars
+  const bars = document.querySelectorAll(".bar");
+  for (let i = 0; i < arr.length - 1; i++) {
+    for (let j = 0; j < arr.length - i - 1; j++) {
+      // Select two bars
+      tl.to(bars[j], { backgroundColor: "#d1507b", duration: 0.25 }, ">");
+      tl.to(bars[j + 1], { backgroundColor: "#d1507b", duration: 0.25 }, "<");
+      tl.add("beforeSwap");
 
-    if (myArray[j] > myArray[j + 1]) {
-      // Swap two bars
-      [myArray[j], myArray[j + 1]] = [myArray[j + 1], myArray[j]];
-      t1.to(bars[j], { x: 34, ease: "power4.inOut" }), ">";
-      t1.to(bars[j + 1], { x: -34, ease: "power4.inOut" }, "<");
+      if (arr[j] > arr[j + 1]) {
+        // Swap two bars
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+        tl.to(bars[j], { x: 34, ease: "power4.inOut" }), ">";
+        tl.to(bars[j + 1], { x: -34, ease: "power4.inOut" }, "<");
 
-      t1.set(bars[j], { x: 0 });
-      t1.set(bars[j + 1], { x: 0 });
+        tl.set(bars[j], { x: 0 });
+        tl.set(bars[j + 1], { x: 0 });
 
-      t1.set(bars[j], { height: `${myArray[j] * 20}px` });
-      t1.set(bars[j + 1], { height: `${myArray[j + 1] * 20}px` });
+        tl.set(bars[j], {
+          height: `${(arr[j] / maxArrayValue) * maxBarHeight}px`,
+        });
+        tl.set(bars[j + 1], {
+          height: `${(arr[j + 1] / maxArrayValue) * maxBarHeight}px`,
+        });
 
-      t1.set(bars[j], { textContent: `${myArray[j]}` });
-      t1.set(bars[j + 1], { textContent: `${myArray[j + 1]}` });
+        tl.set(bars[j].querySelector(".value"), {
+          textContent: `${arr[j]}`,
+        });
+        tl.set(bars[j + 1].querySelector(".value"), {
+          textContent: `${arr[j + 1]}`,
+        });
+      }
+
+      // Revert color back after comparison
+      tl.to(
+        bars[j],
+        { backgroundColor: "#ddd", duration: 0.25 },
+        "beforeSwap+=0.5"
+      );
     }
 
-    // Revert color back after comparison
-    t1.to(
-      bars[j],
-      { backgroundColor: "#ddd", duration: 0.25 },
-      "beforeSwap+=0.5"
+    // Mark the sorted element
+    tl.to(
+      bars[arr.length - 1 - i],
+      { backgroundColor: "#50b1d1", duration: 0.25 },
+      ">"
     );
   }
-
-  // Mark the sorted element
-  t1.to(
-    bars[myArray.length - 1 - i],
-    { backgroundColor: "#50b1d1", duration: 0.25 },
-    ">"
-  );
+  tl.to(bars[0], { backgroundColor: "#50b1d1", duration: 0.25 }, ">");
+  console.log(tl);
 }
-t1.to(bars[0], { backgroundColor: "#50b1d1", duration: 0.25 }, ">");
+
+bubbleSort(myArray);
+
+randomizeBtn.addEventListener("click", () => {
+  tl.restart();
+  tl.clear();
+  tl.pause();
+  progressBar.style.width = "0%";
+
+  myArray = generateRandomArray(nSlider.value);
+  renderBars();
+  bubbleSort(myArray);
+});
 
 // Event Listeners
 playBtn.addEventListener("click", () => {
-  t1.play();
+  tl.play();
 });
 
 pauseBtn.addEventListener("click", () => {
-  t1.pause();
+  tl.pause();
 });
 
 reverseBtn.addEventListener("click", () => {
-  t1.reverse();
+  tl.reverse();
 });
 
 restartBtn.addEventListener("click", () => {
-  t1.restart();
+  tl.restart();
+  tl.pause();
+  progressBar.style.width = "0%";
 });
 
 speedControl.addEventListener("change", (e) => {
   const speedFactor = parseFloat(e.target.value);
-  t1.timeScale(speedFactor);
+  tl.timeScale(speedFactor);
+});
+
+nSlider.addEventListener("input", () => {
+  nValue.textContent = nSlider.value;
 });
