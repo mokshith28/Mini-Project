@@ -6,6 +6,10 @@
     <title>Bubble Sort</title>
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
   </head>
   <body>
     <div class="viewport">
@@ -13,45 +17,58 @@
       <div class="index-container"></div>
     </div>
 
-    <div class="progress-bar-container">
-      <div class="progress-bar"></div>
-    </div>
+    <div class="footer-controls">
+      <div class="media-playback">
+        <div class="progress-bar-container">
+          <div class="progress-bar"></div>
+        </div>
+        <div class="btn-container">
+          <select id="speed-control" class="speed-control">
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1x</option>
+            <option value="2">2x</option>
+            <option value="3">3x</option>
+            <option value="5">5x</option>
+            <option value="10">10x</option>
+          </select>
 
-    <div class="btn-container">
-      <div class="media-controls">
-        <label for="speed-control"></label>
-        <select id="speed-control" class="speed-control">
-          <option value="0.5">0.5x</option>
-          <option value="1" selected>1x</option>
-          <option value="2">2x</option>
-          <option value="3">3x</option>
-          <option value="5">5x</option>
-          <option value="10">10x</option>
-        </select>
+          <div class="play-direction">
+            <button class="reverse">
+              <i class="fa-solid fa-backward fa-lg"></i>
+            </button>
+            <button class="play">
+              <i id="playPauseIcon" class="fa-solid fa-play fa-xl"></i>
+            </button>
+            <button class="forward">
+              <i class="fa-solid fa-forward fa-lg"></i>
+            </button>
+          </div>
 
-        <button class="reverse">Reverse</button>
-        <button class="play">Play</button>
-        <button class="pause">Pause</button>
-        <button class="restart">Reset</button>
+          <button class="restart">
+            <i class="fa-solid fa-rotate-right fa-lg"></i>
+          </button>
+        </div>
       </div>
       <div class="array-controls">
         <div class="array-size-control">
-          <label class="size-lable" for="n-slider">Size:</label>
+          <label class="size-lable" for="n-slider">N =</label>
           <input
             type="range"
             min="2"
-            max="30"
+            max="25"
             value="8"
             id="n-slider"
             class="n-slider"
           />
           <span class="array-size-value">8</span>
         </div>
-        <button class="randomize">Randomize</button>
+        <button class="randomize">
+          <i class="fa-solid fa-shuffle fa-lg"></i>
+        </button>
       </div>
     </div>
 
-    <div class="copyright">&copy; 2024 MissionMangal2</div>
+    <!-- <div class="copyright">&copy; 2024 MissionMangal2 🚀</div> -->
 
     <script type="text/javascript" src="script.js"></script>
   </body>

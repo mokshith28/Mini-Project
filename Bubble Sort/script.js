@@ -3,9 +3,10 @@ const arrayContainer = document.getElementsByClassName("array-container")[0];
 
 const progressBar = document.getElementsByClassName("progress-bar")[0];
 const speedControl = document.getElementsByClassName("speed-control")[0];
-const playBtn = document.getElementsByClassName("play")[0];
-const pauseBtn = document.getElementsByClassName("pause")[0];
+const playPauseBtn = document.getElementsByClassName("play")[0];
+const playPauseIcon = document.getElementById("playPauseIcon");
 const reverseBtn = document.getElementsByClassName("reverse")[0];
+const forwardBtn = document.getElementsByClassName("forward")[0];
 const restartBtn = document.getElementsByClassName("restart")[0];
 const nSlider = document.getElementsByClassName("n-slider")[0];
 const nValue = document.getElementsByClassName("array-size-value")[0];
@@ -54,6 +55,14 @@ let tl = gsap.timeline({
   paused: true,
   defaults: { duration: 0.5 },
   onUpdate: () => (progressBar.style.width = tl.progress() * 100 + "%"),
+  onComplete: () => {
+    playPauseIcon.classList.remove("fa-pause");
+    playPauseIcon.classList.add("fa-play");
+  },
+  onReverseComplete: () => {
+    playPauseIcon.classList.remove("fa-pause");
+    playPauseIcon.classList.add("fa-play");
+  },
 });
 
 // Bubble Sortarr
@@ -107,7 +116,6 @@ function bubbleSort(arr) {
     );
   }
   tl.to(bars[0], { backgroundColor: "#50b1d1", duration: 0.25 }, ">");
-  console.log(tl);
 }
 
 bubbleSort(myArray);
@@ -124,27 +132,50 @@ randomizeBtn.addEventListener("click", () => {
 });
 
 // Event Listeners
-playBtn.addEventListener("click", () => {
-  tl.play();
-});
-
-pauseBtn.addEventListener("click", () => {
-  tl.pause();
+playPauseBtn.addEventListener("click", () => {
+  if (tl.progress() != 1) {
+    if (tl.isActive()) {
+      playPauseIcon.classList.remove("fa-pause");
+      playPauseIcon.classList.add("fa-play");
+      tl.pause();
+    } else {
+      playPauseIcon.classList.remove("fa-play");
+      playPauseIcon.classList.add("fa-pause");
+      tl.resume();
+    }
+  }
 });
 
 reverseBtn.addEventListener("click", () => {
-  tl.reverse();
+  if (tl.progress() != 0) {
+    playPauseIcon.classList.remove("fa-play");
+    playPauseIcon.classList.add("fa-pause");
+    tl.reverse();
+  }
+});
+
+forwardBtn.addEventListener("click", () => {
+  if (tl.progress() != 1) {
+    playPauseIcon.classList.remove("fa-play");
+    playPauseIcon.classList.add("fa-pause");
+    tl.play();
+  }
 });
 
 restartBtn.addEventListener("click", () => {
+  progressBar.style.width = "0%";
+  playPauseIcon.classList.remove("fa-pause");
+  playPauseIcon.classList.add("fa-play");
   tl.restart();
   tl.pause();
-  progressBar.style.width = "0%";
 });
 
 speedControl.addEventListener("change", (e) => {
   const speedFactor = parseFloat(e.target.value);
   tl.timeScale(speedFactor);
+  playPauseIcon.classList.remove("fa-pause");
+  playPauseIcon.classList.add("fa-play");
+  tl.pause();
 });
 
 nSlider.addEventListener("input", () => {
