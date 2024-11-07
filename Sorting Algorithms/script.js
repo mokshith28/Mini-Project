@@ -1,5 +1,6 @@
 const indexContainer = document.getElementsByClassName("index-container")[0];
 const arrayContainer = document.getElementsByClassName("array-container")[0];
+const algorithmDropdown = document.getElementById("algorithmDropdown");
 
 const progressBar = document.getElementsByClassName("progress-bar")[0];
 const speedControl = document.getElementsByClassName("speed-control")[0];
@@ -46,26 +47,27 @@ function renderBars() {
   });
 }
 
-// Renders the Array
-myArray = generateRandomArray(nSlider.value);
-renderBars();
+function restartTimeline() {
+  progressBar.style.width = "0%";
+  playPauseIcon.classList.remove("fa-pause");
+  playPauseIcon.classList.add("fa-play");
+  tl.restart();
+  tl.pause();
+}
 
-// Create Timeline
-let tl = gsap.timeline({
-  paused: true,
-  defaults: { duration: 0.5 },
-  onUpdate: () => (progressBar.style.width = tl.progress() * 100 + "%"),
-  onComplete: () => {
-    playPauseIcon.classList.remove("fa-pause");
-    playPauseIcon.classList.add("fa-play");
-  },
-  onReverseComplete: () => {
-    playPauseIcon.classList.remove("fa-pause");
-    playPauseIcon.classList.add("fa-play");
-  },
-});
+function runSelectedAlgorithm() {
+  // Get the selected value
+  const selectedAlgorithm = algorithmDropdown.value;
 
-// Bubble Sortarr
+  // Run the selected sorting function
+  if (selectedAlgorithm === "bubbleSort") {
+    bubbleSort(myArray);
+  } else if (selectedAlgorithm === "selectionSort") {
+    selectionSort(myArray);
+  }
+}
+
+// Sorting Algorithms
 function bubbleSort(arr) {
   // Get the bars
   const bars = document.querySelectorAll(".bar");
@@ -118,20 +120,96 @@ function bubbleSort(arr) {
   tl.to(bars[0], { backgroundColor: "#50b1d1", duration: 0.25 }, ">");
 }
 
-bubbleSort(myArray);
+function selectionSort(arr) {
+  // Get the bars
+  const bars = document.querySelectorAll(".bar");
+
+  for (let i = 0; i < arr.length - 1; i++) {
+    let minIndex = i;
+
+    // Select the current minimum element
+    tl.to(bars[minIndex], { backgroundColor: "#d1507b", duration: 0.25 }, ">");
+
+    for (let j = i + 1; j < arr.length; j++) {
+      // Highlight the current element being compared
+      tl.to(bars[j], { backgroundColor: "#b0abe0", duration: 0.25 }, ">");
+
+      if (arr[j] < arr[minIndex]) {
+        // Reset previous minimum's color
+        tl.to(bars[minIndex], { backgroundColor: "#ddd", duration: 0.25 }, ">");
+        minIndex = j;
+
+        // Highlight new minimum
+        tl.to(
+          bars[minIndex],
+          { backgroundColor: "#d1507b", duration: 0.25 },
+          "<"
+        );
+      } else {
+        // Revert color back after comparison
+        tl.to(bars[j], { backgroundColor: "#ddd", duration: 0.25 }, ">");
+      }
+    }
+
+    // Swap if minIndex changed
+    if (minIndex !== i) {
+      [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+
+      // Animate the swap
+      tl.to(bars[i], { x: 34 * (minIndex - i), ease: "power4.inOut" }, ">");
+      tl.to(
+        bars[minIndex],
+        { x: -34 * (minIndex - i), ease: "power4.inOut" },
+        "<"
+      );
+
+      // Reset positions and update heights after the swap
+      tl.set(bars[i], {
+        x: 0,
+        height: `${(arr[i] / maxArrayValue) * maxBarHeight}px`,
+      });
+      tl.set(bars[minIndex], {
+        x: 0,
+        height: `${(arr[minIndex] / maxArrayValue) * maxBarHeight}px`,
+      });
+
+      // Update bar values
+      tl.set(bars[i].querySelector(".value"), { textContent: `${arr[i]}` });
+      tl.set(bars[minIndex].querySelector(".value"), {
+        textContent: `${arr[minIndex]}`,
+      });
+
+      tl.set(bars[minIndex], { backgroundColor: "#ddd" });
+    }
+
+    // Mark the sorted element
+    tl.to(bars[i], { backgroundColor: "#50b1d1", duration: 0.25 }, ">");
+  }
+
+  // Mark the last element as sorted
+  tl.to(
+    bars[arr.length - 1],
+    { backgroundColor: "#50b1d1", duration: 0.25 },
+    ">"
+  );
+}
+
+// Event Listeners
+algorithmDropdown.addEventListener("change", () => {
+  restartTimeline();
+  tl.clear();
+  runSelectedAlgorithm();
+});
 
 randomizeBtn.addEventListener("click", () => {
-  tl.restart();
+  restartTimeline();
   tl.clear();
-  tl.pause();
-  progressBar.style.width = "0%";
 
   myArray = generateRandomArray(nSlider.value);
   renderBars();
-  bubbleSort(myArray);
+  runSelectedAlgorithm();
 });
 
-// Event Listeners
 playPauseBtn.addEventListener("click", () => {
   if (tl.progress() != 1) {
     if (tl.isActive()) {
@@ -162,13 +240,7 @@ forwardBtn.addEventListener("click", () => {
   }
 });
 
-restartBtn.addEventListener("click", () => {
-  progressBar.style.width = "0%";
-  playPauseIcon.classList.remove("fa-pause");
-  playPauseIcon.classList.add("fa-play");
-  tl.restart();
-  tl.pause();
-});
+restartBtn.addEventListener("click", restartTimeline);
 
 speedControl.addEventListener("change", (e) => {
   const speedFactor = parseFloat(e.target.value);
@@ -181,3 +253,24 @@ speedControl.addEventListener("change", (e) => {
 nSlider.addEventListener("input", () => {
   nValue.textContent = nSlider.value;
 });
+
+// Starting Point
+myArray = generateRandomArray(nSlider.value);
+renderBars();
+
+// Create Timeline
+let tl = gsap.timeline({
+  paused: true,
+  defaults: { duration: 0.5 },
+  onUpdate: () => (progressBar.style.width = tl.progress() * 100 + "%"),
+  onComplete: () => {
+    playPauseIcon.classList.remove("fa-pause");
+    playPauseIcon.classList.add("fa-play");
+  },
+  onReverseComplete: () => {
+    playPauseIcon.classList.remove("fa-pause");
+    playPauseIcon.classList.add("fa-play");
+  },
+});
+
+runSelectedAlgorithm();
