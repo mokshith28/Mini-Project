@@ -14,6 +14,7 @@ const nValue = document.getElementsByClassName("array-size-value")[0];
 const randomizeBtn = document.getElementsByClassName("randomize")[0];
 
 let myArray = [];
+let originalArray = [];
 let maxArrayValue = Math.max(...myArray);
 const maxBarHeight = 250;
 
@@ -58,13 +59,14 @@ function restartTimeline() {
 function runSelectedAlgorithm() {
   // Get the selected value
   const selectedAlgorithm = algorithmDropdown.value;
-
+  console.log("before run: " + myArray);
   // Run the selected sorting function
   if (selectedAlgorithm === "bubbleSort") {
     bubbleSort(myArray);
   } else if (selectedAlgorithm === "selectionSort") {
     selectionSort(myArray);
   }
+  console.log("after run: " + myArray);
 }
 
 // Sorting Algorithms
@@ -200,15 +202,10 @@ algorithmDropdown.addEventListener("change", () => {
   tl.clear();
 
   // Reset the array variable
-  let prevArr = [];
-  const values = document.querySelectorAll(".value");
-  values.forEach((value) => {
-    prevArr.push(value.textContent);
-  });
-  myArray = prevArr;
+  myArray = originalArray;
 
-  console.log(myArray);
-
+  console.log("after reset: " + myArray);
+  renderBars();
   runSelectedAlgorithm();
 });
 
@@ -217,6 +214,7 @@ randomizeBtn.addEventListener("click", () => {
   tl.clear();
 
   myArray = generateRandomArray(nSlider.value);
+  originalArray = [...myArray];
   renderBars();
   runSelectedAlgorithm();
 });
@@ -267,6 +265,7 @@ nSlider.addEventListener("input", () => {
 
 // Starting Point
 myArray = generateRandomArray(nSlider.value);
+originalArray = [...myArray];
 renderBars();
 
 // Create Timeline
