@@ -198,6 +198,17 @@ function selectionSort(arr) {
 algorithmDropdown.addEventListener("change", () => {
   restartTimeline();
   tl.clear();
+
+  // Reset the array variable
+  let prevArr = [];
+  const values = document.querySelectorAll(".value");
+  values.forEach((value) => {
+    prevArr.push(value.textContent);
+  });
+  myArray = prevArr;
+
+  console.log(myArray);
+
   runSelectedAlgorithm();
 });
 
