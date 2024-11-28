@@ -3,23 +3,35 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bubble Sort</title>
+    <title>Searching</title>
     <link rel="stylesheet" href="style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
   </head>
   <body>
+    <header><a href="../index.html" class="sort-scope">Sort Scope</a></header>
+
     <select id="algorithmDropdown" class="algorithmDropdown">
-      <option value="bubbleSort" selected>Bubble Sort</option>
-      <option value="selectionSort">Selection Sort</option>
+      <option value="linearSearch" selected>Linear Search</option>
+      <option value="binarySearch">Binary Search</option>
     </select>
+
+    <div class="search-controls">
+      <input
+        type="number"
+        id="search-key"
+        class="search-key"
+        placeholder="Enter key to search"
+      />
+      <button id="search-button" class="search-button">Search</button>
+    </div>
 
     <div class="viewport">
       <div class="array-container"></div>
       <div class="index-container"></div>
+      <div class="output">This is output section</div>
     </div>
 
     <div class="footer-controls">
@@ -75,6 +87,7 @@
 
     <!-- <div class="copyright">&copy; 2024 MissionMangal2 🚀</div> -->
 
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script type="text/javascript" src="script.js"></script>
   </body>
 </html>

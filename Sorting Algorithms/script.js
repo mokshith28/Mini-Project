@@ -65,6 +65,8 @@ function runSelectedAlgorithm() {
     bubbleSort(myArray);
   } else if (selectedAlgorithm === "selectionSort") {
     selectionSort(myArray);
+  } else if (selectedAlgorithm === "insertionSort") {
+    insertionSort(myArray);
   }
   console.log("after run: " + myArray);
 }
@@ -196,13 +198,74 @@ function selectionSort(arr) {
   );
 }
 
+function insertionSort(arr) {
+  const bars = document.querySelectorAll(".bar");
+
+  for (let i = 1; i < arr.length; i++) {
+    let key = arr[i];
+    let j = i - 1;
+
+    // Highlight the current element being inserted
+    tl.to(bars[i], { backgroundColor: "#d1507b", duration: 0.25 }, ">");
+    tl.to(bars[i], { y: -300, duration: 0.25 }, ">");
+
+    while (j >= 0 && arr[j] > key) {
+      // Highlight the compared element
+      tl.to(bars[j], { backgroundColor: "#b0abe0", duration: 0.25 }, ">");
+
+      // Shift the bar one position to the right
+      arr[j + 1] = arr[j];
+      tl.to(bars[j], { x: 34, ease: "power4.inOut" }, ">");
+
+      tl.set(bars[j + 1], {
+        height: `${(arr[j] / maxArrayValue) * maxBarHeight}px`,
+        x: 0,
+      });
+      tl.set(bars[j + 1].querySelector(".value"), {
+        textContent: `${arr[j]}`,
+      });
+
+      tl.set(bars[j], {
+        height: `0px`,
+        x: 0,
+      });
+      tl.set(bars[j].querySelector(".value"), {
+        textContent: ``,
+      });
+
+      // Revert the compared element's color
+      tl.to(bars[j], { backgroundColor: "#ddd", duration: 0.25 }, ">");
+      j--;
+    }
+
+    // Place the key in its correct position
+    arr[j + 1] = key;
+
+    tl.to(bars[i], { x: 34 * (j + 1 - i), ease: "power4.inOut" }, ">");
+    tl.set(bars[j + 1], {
+      height: `${(key / maxArrayValue) * maxBarHeight}px`,
+      x: 0,
+    });
+    tl.set(bars[j + 1].querySelector(".value"), { textContent: `${key}` });
+
+    // Revert the current bar's color
+    tl.to(bars[i], { backgroundColor: "#ddd", duration: 0.25 }, ">");
+    tl.to(bars[i], { y: 0, duration: 0.25 }, ">");
+  }
+
+  // Mark all elements as sorted
+  for (let k = 0; k < arr.length; k++) {
+    tl.to(bars[k], { backgroundColor: "#50b1d1", duration: 0.25 }, ">");
+  }
+}
+
 // Event Listeners
 algorithmDropdown.addEventListener("change", () => {
   restartTimeline();
   tl.clear();
 
   // Reset the array variable
-  myArray = originalArray;
+  myArray = [...originalArray];
 
   console.log("after reset: " + myArray);
   renderBars();

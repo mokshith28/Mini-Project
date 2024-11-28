@@ -33,7 +33,6 @@ header {
   transition: background 0.3s ease;
   cursor: pointer;
 }
-
 label,
 span {
   font-size: 15px;
@@ -84,55 +83,63 @@ button:active {
   height: 300px;
   width: auto;
   flex-wrap: wrap;
-  min-width: 400px;
+  min-width: 100px;
   margin: 0px auto;
   margin-bottom: 50px;
 }
 
 .array-container {
-  height: 100%;
+  height: auto;
   width: 100%;
-  padding: 0px 30px;
+  padding: 10px 10px;
   display: flex;
-  align-items: flex-end;
+  flex-direction: row;
+  align-items: center;
   justify-content: center;
+  gap: 10px; /* Space between boxes */
   border: 1px solid #fff;
   background-color: #1a1a1a;
 }
 
-.bar {
-  position: relative;
-  width: 30px;
-  margin: 0 2px;
-  background-color: #ddd;
-  text-align: center;
-  color: #000;
-  border: 2px solid #fff;
-  border-bottom: none;
-}
-
-.bar .value {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
+.box {
+  width: 50px; /* Set width for each box */
+  height: 50px; /* Set height for each box */
+  background-color: #333;
   color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border: 1px solid #fff;
   text-align: center;
-  width: 100%;
+  font-size: 16px;
 }
 
 .index-container {
   display: flex;
-  align-items: flex-end;
   justify-content: center;
+  gap: 10px; /* Match the array container's spacing */
   margin-top: 5px;
 }
 
 .index {
-  width: 30px;
-  margin: 0 2px;
+  width: 50px; /* Match the size of the array elements */
   text-align: center;
   font-size: 12px;
+}
+
+.output {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 100px; /* Set a fixed height if necessary */
+  width: 100%; /* Make it span the width of its container */
+  background-color: #222; /* Optional: Add a background to make it stand out */
+  color: #fff; /* Optional: Text color */
+  font-size: 18px; /* Optional: Font size */
+  text-align: center; /* Ensure text is centered */
+  margin: 50px 0; /* Optional: Add spacing around the section */
+  border: 1px solid #fff;
 }
 
 .footer-controls {
@@ -257,4 +264,41 @@ button:active {
   font-size: 11px;
   padding: 5px 10px;
   color: #e5e5e5;
+}
+
+.search-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 25px;
+  gap: 10px;
+}
+
+.search-key {
+  padding: 5px 10px;
+  font-size: 14px;
+  border: 1.5px solid #fff;
+  background-color: #1a1a1a;
+  color: #fff;
+  outline: none;
+  width: 180px;
+  transition: border-color 0.3s ease;
+}
+
+.search-key:focus {
+  border-color: #aa50d1;
+}
+
+.search-button {
+  padding: 6px 15px;
+  font-size: 14px;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: 1px solid #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: #222;
 }
