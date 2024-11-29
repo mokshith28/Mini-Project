@@ -73,22 +73,129 @@ function runSelectedAlgorithm() {
 // Searching Algorithms
 function linearSearch(arr, target) {
   const bars = document.querySelectorAll(".box");
-
+  const indices = document.querySelectorAll(".index");
+  let isFound = false;
   for (let i = 0; i < arr.length; i++) {
     // Highlight the current bar being compared
+    tl.set(indices[i], {
+      innerHTML: "i",
+      fontSize: 20,
+      fontWeight: "bold",
+      color: "#d1507b",
+    });
     tl.to(bars[i], { backgroundColor: "#d1507b", duration: 0.25 }, ">");
 
     if (arr[i] === target) {
       // If the target is found, highlight it
       tl.to(bars[i], { backgroundColor: "#50b1d1", duration: 0.5 }, ">");
-      tl.set(outputDisplay, { innerHTML: "Key is found at index " + i }, "<");
+      tl.set(indices[i], {
+        innerHTML: "i",
+        fontSize: 20,
+        fontWeight: "bold",
+        color: "#50b1d1",
+      });
+      tl.set(outputDisplay, { innerHTML: "Key is found at index " + i });
+      isFound = true;
       break; // Stop the search once the target is found
     } else {
       // Revert the color of the bar if not the target
       tl.to(bars[i], { backgroundColor: "#333", duration: 0.25 }, ">");
     }
+    tl.set(indices[i], {
+      innerHTML: i,
+      fontSize: 12,
+      fontWeight: "normal",
+      color: "#fff",
+    });
   }
-  tl.set(outputDisplay, { innerHTML: "Key is not found" }, "<");
+  if (!isFound) {
+    tl.set(outputDisplay, { innerHTML: "Key is not found" });
+  }
+}
+
+function binarySearch(arr, target) {
+  myArray.sort();
+  renderBoxes();
+  const bars = document.querySelectorAll(".box");
+  const indices = document.querySelectorAll(".index");
+  let low = 0;
+  let high = arr.length - 1;
+  let isFound = false;
+
+  while (low <= high) {
+    tl.set(indices[low], {
+      innerHTML: "low",
+      fontSize: 15,
+      fontWeight: "bold",
+      color: "#50b1d1",
+    });
+    tl.set(indices[high], {
+      innerHTML: "high",
+      fontSize: 15,
+      fontWeight: "bold",
+      color: "#50b1d1",
+    });
+    const mid = Math.floor((low + high) / 2);
+
+    // Highlight the current middle index
+    tl.set(indices[mid], {
+      innerHTML: "mid",
+      fontSize: 15,
+      fontWeight: "bold",
+      color: "#d1507b",
+    });
+    tl.to(bars[mid], { backgroundColor: "#d1507b", duration: 0.5 }, ">");
+
+    if (arr[mid] === target) {
+      // Key is found at the mid index
+      tl.to(bars[mid], { backgroundColor: "#50b1d1", duration: 0.5 }, ">");
+      tl.set(indices[mid], {
+        innerHTML: "mid",
+        fontSize: 20,
+        fontWeight: "bold",
+        color: "#50b1d1",
+      });
+      tl.set(outputDisplay, { innerHTML: "Key is found at index " + mid });
+      isFound = true;
+      break;
+    } else if (arr[mid] < target) {
+      // Key is in the right half, discard the left half
+      for (let i = low; i <= mid; i++) {
+        tl.to(bars[i], { backgroundColor: "#333", duration: 0.25 }, ">");
+        tl.set(indices[i], {
+          innerHTML: i,
+          fontSize: 12,
+          fontWeight: "normal",
+          color: "#fff",
+        });
+      }
+      low = mid + 1;
+    } else {
+      // Key is in the left half, discard the right half
+      for (let i = mid; i <= high; i++) {
+        tl.to(bars[i], { backgroundColor: "#333", duration: 0.25 }, ">");
+        tl.set(indices[i], {
+          innerHTML: i,
+          fontSize: 12,
+          fontWeight: "normal",
+          color: "#fff",
+        });
+      }
+      high = mid - 1;
+    }
+
+    // Reset mid index style after this iteration
+    tl.set(indices[mid], {
+      innerHTML: mid,
+      fontSize: 12,
+      fontWeight: "normal",
+      color: "#fff",
+    });
+  }
+
+  if (!isFound) {
+    tl.set(outputDisplay, { innerHTML: "Key is not found" });
+  }
 }
 
 // Event Listeners
