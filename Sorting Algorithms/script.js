@@ -15,7 +15,7 @@ const randomizeBtn = document.getElementsByClassName("randomize")[0];
 const iterationEle = document.getElementById("iterations");
 const comparisonEle = document.getElementById("comparisons");
 const swapEle = document.getElementById("swaps");
-const codeDisplay = document.querySelector(".code-display");
+const codeDisplay = document.getElementsByClassName("code-display")[0];
 
 const complexity = {
   bubbleSort: { time: "O(N²)", space: "O(1)" },
@@ -168,6 +168,8 @@ function runSelectedAlgorithm() {
     selectionSort(myArray);
   } else if (selectedAlgorithm === "insertionSort") {
     insertionSort(myArray);
+  } else if (selectedAlgorithm === "mergeSort") {
+    mergeSort(myArray);
   }
   console.log("after run: " + myArray);
 }
@@ -336,67 +338,214 @@ function selectionSort(arr) {
   );
 }
 
+// function insertionSort(arr) {
+//   const bars = document.querySelectorAll(".bar");
+
+//   for (let i = 1; i < arr.length; i++) {
+//     let key = arr[i];
+//     let j = i - 1;
+
+//     // Highlight the current element being inserted
+//     tl.to(bars[i], { backgroundColor: "#d1507b", duration: 0.25 }, ">");
+//     tl.to(bars[i], { y: -300, duration: 0.25 }, ">");
+
+//     while (j >= 0 && arr[j] > key) {
+//       // Highlight the compared element
+//       tl.to(bars[j], { backgroundColor: "#b0abe0", duration: 0.25 }, ">");
+
+//       // Shift the bar one position to the right
+//       arr[j + 1] = arr[j];
+//       tl.to(bars[j], { x: 34, ease: "power4.inOut" }, ">");
+
+//       tl.set(bars[j + 1], {
+//         height: `${
+//           (arr[j] / maxArrayValue) * arrayContainer.offsetHeight * 0.9
+//         }px`,
+//         x: 0,
+//       });
+//       tl.set(bars[j + 1].querySelector(".value"), {
+//         textContent: `${arr[j]}`,
+//       });
+
+//       tl.set(bars[j], {
+//         height: `0px`,
+//         x: 0,
+//       });
+//       tl.set(bars[j].querySelector(".value"), {
+//         textContent: ``,
+//       });
+
+//       // Revert the compared element's color
+//       tl.to(bars[j], { backgroundColor: "#ddd", duration: 0.25 }, ">");
+//       j--;
+//     }
+
+//     // Place the key in its correct position
+//     arr[j + 1] = key;
+
+//     tl.to(bars[i], { x: 34 * (j + 1 - i), ease: "power4.inOut" }, ">");
+//     tl.set(bars[j + 1], {
+//       height: `${(key / maxArrayValue) * arrayContainer.offsetHeight * 0.9}px`,
+//       x: 0,
+//     });
+//     tl.set(bars[j + 1].querySelector(".value"), { textContent: `${key}` });
+
+//     // Revert the current bar's color
+//     tl.to(bars[i], { backgroundColor: "#ddd", duration: 0.25 }, ">");
+//     tl.to(bars[i], { y: 0, duration: 0.25 }, ">");
+//   }
+
+//   // Mark all elements as sorted
+//   for (let k = 0; k < arr.length; k++) {
+//     tl.to(bars[k], { backgroundColor: "#50b1d1", duration: 0.25 }, ">");
+//   }
+// }
+
 function insertionSort(arr) {
   const bars = document.querySelectorAll(".bar");
 
   for (let i = 1; i < arr.length; i++) {
+    tl.call(() => highlightLines([2, 3])); // Outer loop
     let key = arr[i];
     let j = i - 1;
 
-    // Highlight the current element being inserted
-    tl.to(bars[i], { backgroundColor: "#d1507b", duration: 0.25 }, ">");
-    tl.to(bars[i], { y: -300, duration: 0.25 }, ">");
+    // Highlight the key being picked
+    tl.to(bars[i], { backgroundColor: "#d1507b", duration: 0.25 });
+    tl.set(iterationEle, { textContent: iterations++ });
 
+    tl.call(() => highlightLines([4])); // Picking the key
     while (j >= 0 && arr[j] > key) {
-      // Highlight the compared element
-      tl.to(bars[j], { backgroundColor: "#b0abe0", duration: 0.25 }, ">");
-
-      // Shift the bar one position to the right
+      tl.call(() => highlightLines([5, 6])); // Condition check
+      // Move the current element one position to the right
+      tl.to(bars[j + 1], { backgroundColor: "#9f99e0", duration: 0.25 });
       arr[j + 1] = arr[j];
-      tl.to(bars[j], { x: 34, ease: "power4.inOut" }, ">");
 
-      tl.set(bars[j + 1], {
+      tl.to(bars[j + 1], {
         height: `${
-          (arr[j] / maxArrayValue) * arrayContainer.offsetHeight * 0.9
+          (arr[j + 1] / maxArrayValue) * arrayContainer.offsetHeight * 0.9
         }px`,
-        x: 0,
+        duration: 0.5,
       });
       tl.set(bars[j + 1].querySelector(".value"), {
-        textContent: `${arr[j]}`,
+        textContent: `${arr[j + 1]}`,
       });
 
-      tl.set(bars[j], {
-        height: `0px`,
-        x: 0,
-      });
-      tl.set(bars[j].querySelector(".value"), {
-        textContent: ``,
-      });
-
-      // Revert the compared element's color
-      tl.to(bars[j], { backgroundColor: "#ddd", duration: 0.25 }, ">");
       j--;
+      tl.to(bars[j + 1], { backgroundColor: "#ddd", duration: 0.25 }, ">");
     }
 
-    // Place the key in its correct position
+    // Insert the key in its correct position
+    tl.call(() => highlightLines([8])); // Insertion logic
     arr[j + 1] = key;
 
-    tl.to(bars[i], { x: 34 * (j + 1 - i), ease: "power4.inOut" }, ">");
-    tl.set(bars[j + 1], {
-      height: `${(key / maxArrayValue) * arrayContainer.offsetHeight * 0.9}px`,
-      x: 0,
+    tl.to(bars[j + 1], { backgroundColor: "#d1507b", duration: 0.25 });
+    tl.to(bars[j + 1], {
+      height: `${
+        (arr[j + 1] / maxArrayValue) * arrayContainer.offsetHeight * 0.9
+      }px`,
+      duration: 0.5,
     });
-    tl.set(bars[j + 1].querySelector(".value"), { textContent: `${key}` });
+    tl.set(bars[j + 1].querySelector(".value"), {
+      textContent: `${arr[j + 1]}`,
+    });
+    tl.to(bars[j + 1], { backgroundColor: "#ddd", duration: 0.25 }, ">");
 
-    // Revert the current bar's color
-    tl.to(bars[i], { backgroundColor: "#ddd", duration: 0.25 }, ">");
-    tl.to(bars[i], { y: 0, duration: 0.25 }, ">");
+    // Mark all elements before i as sorted
+    for (let k = 0; k <= i; k++) {
+      tl.to(bars[k], { backgroundColor: "#50b1d1", duration: 0.25 }, ">");
+    }
+  }
+  tl.call(() => highlightLines([10]));
+}
+
+function mergeSort(arr, start = 0, end = arr.length - 1) {
+  const bars = document.querySelectorAll(".bar");
+
+  function merge(arr, start, mid, end) {
+    const left = arr.slice(start, mid + 1);
+    const right = arr.slice(mid + 1, end + 1);
+
+    let i = 0,
+      j = 0,
+      k = start;
+
+    while (i < left.length && j < right.length) {
+      tl.set(comparisonEle, { textContent: comparisons++ }); // Update comparisons
+      if (left[i] <= right[j]) {
+        arr[k] = left[i];
+        i++;
+      } else {
+        arr[k] = right[j];
+        j++;
+      }
+
+      // Update the height and value of the current bar
+      tl.to(bars[k], { backgroundColor: "#d1507b", duration: 0.25 });
+      tl.to(bars[k], {
+        height: `${
+          (arr[k] / maxArrayValue) * arrayContainer.offsetHeight * 0.9
+        }px`,
+        duration: 0.5,
+      });
+      tl.set(bars[k].querySelector(".value"), { textContent: `${arr[k]}` });
+      tl.to(bars[k], { backgroundColor: "#ddd", duration: 0.25 });
+      k++;
+    }
+
+    while (i < left.length) {
+      arr[k] = left[i];
+      i++;
+      // Update remaining left elements
+      tl.to(bars[k], { backgroundColor: "#d1507b", duration: 0.25 });
+      tl.to(bars[k], {
+        height: `${
+          (arr[k] / maxArrayValue) * arrayContainer.offsetHeight * 0.9
+        }px`,
+        duration: 0.5,
+      });
+      tl.set(bars[k].querySelector(".value"), { textContent: `${arr[k]}` });
+      tl.to(bars[k], { backgroundColor: "#ddd", duration: 0.25 });
+      k++;
+    }
+
+    while (j < right.length) {
+      arr[k] = right[j];
+      j++;
+      // Update remaining right elements
+      tl.to(bars[k], { backgroundColor: "#d1507b", duration: 0.25 });
+      tl.to(bars[k], {
+        height: `${
+          (arr[k] / maxArrayValue) * arrayContainer.offsetHeight * 0.9
+        }px`,
+        duration: 0.5,
+      });
+      tl.set(bars[k].querySelector(".value"), { textContent: `${arr[k]}` });
+      tl.to(bars[k], { backgroundColor: "#ddd", duration: 0.25 });
+      k++;
+    }
   }
 
-  // Mark all elements as sorted
-  for (let k = 0; k < arr.length; k++) {
-    tl.to(bars[k], { backgroundColor: "#50b1d1", duration: 0.25 }, ">");
+  function recursiveMergeSort(arr, start, end) {
+    if (start >= end) return;
+
+    const mid = Math.floor((start + end) / 2);
+    tl.set(iterationEle, { textContent: iterations++ }); // Update iterations
+
+    recursiveMergeSort(arr, start, mid);
+    recursiveMergeSort(arr, mid + 1, end);
+    tl.call(() => highlightLines([3, 4])); // Highlight splitting logic
+
+    merge(arr, start, mid, end);
+    tl.call(() => highlightLines([5])); // Highlight merge call
+
+    // Mark the merged section as sorted
+    for (let i = start; i <= end; i++) {
+      tl.to(bars[i], { backgroundColor: "#50b1d1", duration: 0.25 }, ">");
+    }
   }
+
+  recursiveMergeSort(arr, start, end);
+  tl.call(() => highlightLines([7])); // Highlight function declaration
 }
 
 // Event Listeners

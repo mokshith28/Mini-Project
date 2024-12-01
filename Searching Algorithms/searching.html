@@ -30,7 +30,18 @@
     </div>
 
     <div class="viewport">
-      <div class="stats-display">Stats Section</div>
+      <div class="stats-display">
+        <h2>Statistics</h2>
+        <div class="stats-value">
+          <p>Index Value: <span id="i-value">0</span></p>
+          <p>Low Index Value: <span id="low-index">0</span></p>
+          <p>Mid Index Value: <span id="mid-index">0</span></p>
+          <p>High Index Value: <span id="high-index">0</span></p>
+          <p>Comparisons: <span id="comparisons">0</span></p>
+          <p>Time Complexity: <span id="time-complexity">O(N)</span></p>
+          <p>Space Complexity: <span id="space-complexity">O(1)</span></p>
+        </div>
+      </div>
       <div class="anim-display">
         <div class="array-container"></div>
         <div class="index-container"></div>
@@ -77,12 +88,12 @@
           <input
             type="range"
             min="2"
-            max="25"
-            value="8"
+            max="15"
+            value="10"
             id="n-slider"
             class="n-slider"
           />
-          <span class="array-size-value">8</span>
+          <span class="array-size-value">10</span>
         </div>
         <button class="randomize">
           <i class="fa-solid fa-shuffle fa-lg"></i>

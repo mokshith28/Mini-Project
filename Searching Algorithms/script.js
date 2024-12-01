@@ -15,11 +15,52 @@ const nSlider = document.getElementsByClassName("n-slider")[0];
 const nValue = document.getElementsByClassName("array-size-value")[0];
 const randomizeBtn = document.getElementsByClassName("randomize")[0];
 const searchBtn = document.getElementsByClassName("search-button")[0];
+const iValueEle = document.getElementById("i-value");
+const comparisonEle = document.getElementById("comparisons");
+const lowIndexEle = document.getElementById("low-index");
+const highIndexEle = document.getElementById("high-index");
+const midIndexEle = document.getElementById("mid-index");
+const codeDisplay = document.getElementsByClassName("code-display")[0];
+
+const complexity = {
+  linearSearch: { time: "O(N)", space: "O(1)" },
+  binarySearch: { time: "O(N log N)", space: "O(1)" },
+};
+
+const codeSnippets = {
+  linearSearch: [
+    "int linearSearch(int arr[], int n, int key) {",
+    "    for (int i = 0; i < n; i++) {",
+    "        if (arr[i] == key) {",
+    "            return i; // Key found",
+    "        }",
+    "    }",
+    "    return -1; // Key not found",
+    "}",
+  ],
+  binarySearch: [
+    "int binarySearch(int arr[], int left, int right, int key) {",
+    "    while (left <= right) {",
+    "        int mid = left + (right - left) / 2;",
+    "        if (arr[mid] == key) {",
+    "            return mid; // Key found",
+    "        }",
+    "        if (arr[mid] < key) {",
+    "            left = mid + 1; // Search right half",
+    "        } else {",
+    "            right = mid - 1; // Search left half",
+    "        }",
+    "    }",
+    "    return -1; // Key not found",
+    "}",
+  ],
+};
 
 let myArray = [];
 let originalArray = [];
 let maxArrayValue = Math.max(...myArray);
-const maxBarHeight = 250;
+let comparisons = 0;
+let ivalue = 0;
 
 // Helper Functions
 function generateRandomArray(size) {
@@ -46,6 +87,34 @@ function renderBoxes() {
   });
 }
 
+function renderCode(algorithm) {
+  const code = codeSnippets[algorithm];
+  if (!code) {
+    codeDisplay.innerHTML = `<div class="error">No code available for ${algorithm}</div>`;
+    return;
+  }
+
+  codeDisplay.innerHTML = `<div class="code-line-wrapper">${code
+    .map(
+      (line, index) =>
+        `<div class="code-line" data-line="${index}">${line}</div>`
+    )
+    .join("")}</div>`;
+}
+
+function highlightLines(lines) {
+  document.querySelectorAll(".code-line").forEach((line) => {
+    line.classList.remove("highlight");
+  });
+
+  lines.forEach((lineNumber) => {
+    const line = document.querySelector(
+      `.code-line[data-line="${lineNumber}"]`
+    );
+    if (line) line.classList.add("highlight");
+  });
+}
+
 function restartTimeline() {
   progressBar.style.width = "0%";
   playPauseIcon.classList.remove("fa-pause");
@@ -58,9 +127,7 @@ function runSelectedAlgorithm() {
   // Get the selected value
   const selectedAlgorithm = algorithmDropdown.value;
   const key = parseInt(searchKey.value, 10);
-  // console.log("before run: " + myArray);
-  console.log(key);
-
+  resetStats();
   // Run the selected sorting function
   if (selectedAlgorithm === "linearSearch") {
     linearSearch(myArray, key);
@@ -70,12 +137,26 @@ function runSelectedAlgorithm() {
   console.log("after run: " + myArray);
 }
 
+function resetStats() {
+  comparisons = 0;
+  ivalue = 0;
+}
+
+function updateComplexity(algorithm) {
+  document.getElementById("time-complexity").textContent =
+    complexity[algorithm].time;
+  document.getElementById("space-complexity").textContent =
+    complexity[algorithm].space;
+}
+
 // Searching Algorithms
 function linearSearch(arr, target) {
   const bars = document.querySelectorAll(".box");
   const indices = document.querySelectorAll(".index");
   let isFound = false;
   for (let i = 0; i < arr.length; i++) {
+    tl.set(iValueEle, { textContent: ivalue++ });
+    tl.call(() => highlightLines([1]));
     // Highlight the current bar being compared
     tl.set(indices[i], {
       innerHTML: "i",
@@ -85,9 +166,13 @@ function linearSearch(arr, target) {
     });
     tl.to(bars[i], { backgroundColor: "#d1507b", duration: 0.25 }, ">");
 
+    tl.call(() => highlightLines([2]));
+
+    tl.set(comparisonEle, { textContent: comparisons++ });
     if (arr[i] === target) {
       // If the target is found, highlight it
-      tl.to(bars[i], { backgroundColor: "#50b1d1", duration: 0.5 }, ">");
+
+      tl.call(() => highlightLines([3]));
       tl.set(indices[i], {
         innerHTML: "i",
         fontSize: 20,
@@ -95,6 +180,7 @@ function linearSearch(arr, target) {
         color: "#50b1d1",
       });
       tl.set(outputDisplay, { innerHTML: "Key is found at index " + i });
+      tl.to(bars[i], { backgroundColor: "#50b1d1", duration: 0.5 }, ">");
       isFound = true;
       break; // Stop the search once the target is found
     } else {
@@ -109,91 +195,141 @@ function linearSearch(arr, target) {
     });
   }
   if (!isFound) {
+    tl.call(() => highlightLines([6]));
     tl.set(outputDisplay, { innerHTML: "Key is not found" });
   }
 }
 
 function binarySearch(arr, target) {
-  myArray.sort();
-  renderBoxes();
   const bars = document.querySelectorAll(".box");
   const indices = document.querySelectorAll(".index");
+
   let low = 0;
   let high = arr.length - 1;
   let isFound = false;
 
   while (low <= high) {
+    tl.set(lowIndexEle, { textContent: low }); // Display the low index
+    tl.set(highIndexEle, { textContent: high }); // Display the high index
+    const mid = Math.floor((low + high) / 2);
+    tl.set(midIndexEle, { textContent: mid }); // Display the mid index
+
     tl.set(indices[low], {
       innerHTML: "low",
-      fontSize: 15,
+      fontSize: 20,
       fontWeight: "bold",
       color: "#50b1d1",
     });
     tl.set(indices[high], {
       innerHTML: "high",
-      fontSize: 15,
+      fontSize: 20,
       fontWeight: "bold",
       color: "#50b1d1",
     });
-    const mid = Math.floor((low + high) / 2);
-
-    // Highlight the current middle index
     tl.set(indices[mid], {
       innerHTML: "mid",
-      fontSize: 15,
+      fontSize: 20,
       fontWeight: "bold",
       color: "#d1507b",
     });
-    tl.to(bars[mid], { backgroundColor: "#d1507b", duration: 0.5 }, ">");
+
+    // Highlight the range being searched
+    tl.call(() => highlightLines([1]));
+    for (let i = low; i <= high; i++) {
+      tl.to(bars[i], { backgroundColor: "#9f99e0", duration: 0.25 }, ">");
+    }
+
+    tl.to(bars[mid], { backgroundColor: "#d1507b", duration: 0.25 }, ">");
+
+    tl.set(comparisonEle, { textContent: comparisons++ });
 
     if (arr[mid] === target) {
-      // Key is found at the mid index
+      // Target found
+      tl.call(() => highlightLines([3]));
+      tl.set(outputDisplay, { innerHTML: "Key is found at index " + mid });
       tl.to(bars[mid], { backgroundColor: "#50b1d1", duration: 0.5 }, ">");
+      isFound = true;
+      tl.set(indices[low], {
+        innerHTML: low,
+        fontSize: 12,
+        fontWeight: "normal",
+        color: "#fff",
+      });
+      tl.set(indices[high], {
+        innerHTML: high,
+        fontSize: 12,
+        fontWeight: "normal",
+        color: "#fff",
+      });
       tl.set(indices[mid], {
         innerHTML: "mid",
         fontSize: 20,
         fontWeight: "bold",
-        color: "#50b1d1",
+        color: "#d1507b",
       });
-      tl.set(outputDisplay, { innerHTML: "Key is found at index " + mid });
-      isFound = true;
+      tl.call(() => highlightLines([4]));
       break;
     } else if (arr[mid] < target) {
-      // Key is in the right half, discard the left half
+      // Search in the right half
+      tl.call(() => highlightLines([6]));
+      tl.to(bars[mid], { backgroundColor: "#333", duration: 0.25 }, ">");
       for (let i = low; i <= mid; i++) {
         tl.to(bars[i], { backgroundColor: "#333", duration: 0.25 }, ">");
-        tl.set(indices[i], {
-          innerHTML: i,
-          fontSize: 12,
-          fontWeight: "normal",
-          color: "#fff",
-        });
       }
+      tl.call(() => highlightLines([7]));
+      tl.to({}, { duration: 0.5 });
+      tl.set(indices[low], {
+        innerHTML: low,
+        fontSize: 12,
+        fontWeight: "normal",
+        color: "#fff",
+      });
+      tl.set(indices[high], {
+        innerHTML: high,
+        fontSize: 12,
+        fontWeight: "normal",
+        color: "#fff",
+      });
+      tl.set(indices[mid], {
+        innerHTML: mid,
+        fontSize: 12,
+        fontWeight: "normal",
+        color: "#fff",
+      });
       low = mid + 1;
     } else {
-      // Key is in the left half, discard the right half
+      // Search in the left half
+      tl.call(() => highlightLines([8]));
+      tl.to(bars[mid], { backgroundColor: "#333", duration: 0.25 }, ">");
       for (let i = mid; i <= high; i++) {
         tl.to(bars[i], { backgroundColor: "#333", duration: 0.25 }, ">");
-        tl.set(indices[i], {
-          innerHTML: i,
-          fontSize: 12,
-          fontWeight: "normal",
-          color: "#fff",
-        });
       }
+      tl.call(() => highlightLines([9]));
+      tl.to({}, { duration: 0.5 });
+      tl.set(indices[low], {
+        innerHTML: low,
+        fontSize: 12,
+        fontWeight: "normal",
+        color: "#fff",
+      });
+      tl.set(indices[high], {
+        innerHTML: high,
+        fontSize: 12,
+        fontWeight: "normal",
+        color: "#fff",
+      });
+      tl.set(indices[mid], {
+        innerHTML: mid,
+        fontSize: 12,
+        fontWeight: "normal",
+        color: "#fff",
+      });
       high = mid - 1;
     }
-
-    // Reset mid index style after this iteration
-    tl.set(indices[mid], {
-      innerHTML: mid,
-      fontSize: 12,
-      fontWeight: "normal",
-      color: "#fff",
-    });
   }
 
   if (!isFound) {
+    tl.call(() => highlightLines([12]));
     tl.set(outputDisplay, { innerHTML: "Key is not found" });
   }
 }
@@ -207,7 +343,10 @@ algorithmDropdown.addEventListener("change", () => {
   myArray = originalArray;
 
   console.log("after reset: " + myArray);
+  myArray.sort((a, b) => a - b);
   renderBoxes();
+  updateComplexity(algorithmDropdown.value);
+  renderCode(algorithmDropdown.value);
 });
 
 randomizeBtn.addEventListener("click", () => {
@@ -215,6 +354,9 @@ randomizeBtn.addEventListener("click", () => {
   tl.clear();
 
   myArray = generateRandomArray(nSlider.value);
+  if (algorithmDropdown.value === "binarySearch") {
+    myArray.sort((a, b) => a - b);
+  }
   originalArray = [...myArray];
   renderBoxes();
 });
@@ -252,6 +394,9 @@ forwardBtn.addEventListener("click", () => {
 restartBtn.addEventListener("click", restartTimeline);
 
 searchBtn.addEventListener("click", () => {
+  restartTimeline();
+  tl.clear();
+  renderBoxes();
   runSelectedAlgorithm();
   playPauseIcon.classList.remove("fa-play");
   playPauseIcon.classList.add("fa-pause");
@@ -274,6 +419,8 @@ nSlider.addEventListener("input", () => {
 myArray = generateRandomArray(nSlider.value);
 originalArray = [...myArray];
 renderBoxes();
+renderCode(algorithmDropdown.value);
+updateComplexity(algorithmDropdown.value);
 
 // Create Timeline
 let tl = gsap.timeline({
