@@ -12,10 +12,23 @@ const restartBtn = document.getElementsByClassName("restart")[0];
 const nSlider = document.getElementsByClassName("n-slider")[0];
 const nValue = document.getElementsByClassName("array-size-value")[0];
 const randomizeBtn = document.getElementsByClassName("randomize")[0];
+const iterationEle = document.getElementById("iterations");
+const comparisonEle = document.getElementById("comparisons");
+const swapEle = document.getElementById("swaps");
+
+const complexity = {
+  bubbleSort: { time: "O(N²)", space: "O(1)" },
+  selectionSort: { time: "O(N²)", space: "O(1)" },
+  insertionSort: { time: "O(N²)", space: "O(1)" },
+  mergeSort: { time: "O(N log N)", space: "O(N)" },
+};
 
 let myArray = [];
 let originalArray = [];
 let maxArrayValue = Math.max(...myArray);
+let comparisons = 0;
+let swaps = 0;
+let iterations = 0;
 
 // Helper Functions
 function generateRandomArray(size) {
@@ -59,7 +72,7 @@ function restartTimeline() {
 function runSelectedAlgorithm() {
   // Get the selected value
   const selectedAlgorithm = algorithmDropdown.value;
-  console.log("before run: " + myArray);
+  updateComplexity(selectedAlgorithm);
   // Run the selected sorting function
   if (selectedAlgorithm === "bubbleSort") {
     bubbleSort(myArray);
@@ -71,19 +84,34 @@ function runSelectedAlgorithm() {
   console.log("after run: " + myArray);
 }
 
+function resetStats() {
+  comparisons = 0;
+  swaps = 0;
+  iterations = 0;
+}
+
+function updateComplexity(algorithm) {
+  document.getElementById("time-complexity").textContent =
+    complexity[algorithm].time;
+  document.getElementById("space-complexity").textContent =
+    complexity[algorithm].space;
+}
+
 // Sorting Algorithms
 function bubbleSort(arr) {
   // Get the bars
   const bars = document.querySelectorAll(".bar");
   for (let i = 0; i < arr.length - 1; i++) {
+    tl.set(iterationEle, { textContent: iterations++ });
     for (let j = 0; j < arr.length - i - 1; j++) {
       // Select two bars
+      tl.set(comparisonEle, { textContent: comparisons++ });
       tl.to(bars[j], { backgroundColor: "#d1507b", duration: 0.25 }, ">");
       tl.to(bars[j + 1], { backgroundColor: "#d1507b", duration: 0.25 }, "<");
       tl.add("beforeSwap");
-
       if (arr[j] > arr[j + 1]) {
         // Swap two bars
+        tl.set(swapEle, { textContent: swaps++ });
         [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
         tl.to(bars[j], { x: 34, ease: "power4.inOut" }), ">";
         tl.to(bars[j + 1], { x: -34, ease: "power4.inOut" }, "<");
@@ -137,11 +165,12 @@ function selectionSort(arr) {
 
     // Select the current minimum element
     tl.to(bars[minIndex], { backgroundColor: "#d1507b", duration: 0.25 }, ">");
+    tl.set(iterationEle, { textContent: iterations++ });
 
     for (let j = i + 1; j < arr.length; j++) {
       // Highlight the current element being compared
       tl.to(bars[j], { backgroundColor: "#9f99e0", duration: 0.25 }, ">");
-
+      tl.set(comparisonEle, { textContent: comparisons++ });
       if (arr[j] < arr[minIndex]) {
         // Reset previous minimum's color
         tl.to(bars[minIndex], { backgroundColor: "#ddd", duration: 0.25 }, ">");
@@ -162,6 +191,7 @@ function selectionSort(arr) {
     // Swap if minIndex changed
     if (minIndex !== i) {
       [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
+      tl.set(swapEle, { textContent: swaps++ });
 
       // Animate the swap
       tl.to(bars[i], { x: 34 * (minIndex - i), ease: "power4.inOut" }, ">");
@@ -273,11 +303,11 @@ function insertionSort(arr) {
 algorithmDropdown.addEventListener("change", () => {
   restartTimeline();
   tl.clear();
+  resetStats();
 
   // Reset the array variable
   myArray = [...originalArray];
 
-  console.log("after reset: " + myArray);
   renderBars();
   runSelectedAlgorithm();
 });
@@ -285,6 +315,7 @@ algorithmDropdown.addEventListener("change", () => {
 randomizeBtn.addEventListener("click", () => {
   restartTimeline();
   tl.clear();
+  resetStats();
 
   myArray = generateRandomArray(nSlider.value);
   originalArray = [...myArray];

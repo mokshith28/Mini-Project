@@ -40,6 +40,15 @@ span {
   font-size: 15px;
 }
 
+.stats-value p {
+  font-size: 18px;
+}
+
+.stats-value span {
+  font-size: 19px;
+  font-weight: bold;
+}
+
 button {
   margin: 10px;
   padding: 5px 5px;
@@ -101,6 +110,10 @@ button:active {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.stats-value {
+  margin-top: 30px;
 }
 
 .anim-display {
