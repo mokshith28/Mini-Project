@@ -15,12 +15,70 @@ const randomizeBtn = document.getElementsByClassName("randomize")[0];
 const iterationEle = document.getElementById("iterations");
 const comparisonEle = document.getElementById("comparisons");
 const swapEle = document.getElementById("swaps");
+const codeDisplay = document.querySelector(".code-display");
 
 const complexity = {
   bubbleSort: { time: "O(N²)", space: "O(1)" },
   selectionSort: { time: "O(N²)", space: "O(1)" },
   insertionSort: { time: "O(N²)", space: "O(1)" },
   mergeSort: { time: "O(N log N)", space: "O(N)" },
+};
+
+const codeSnippets = {
+  bubbleSort: [
+    "void bubbleSort(int arr[], int n) {",
+    "    for (int i = 0; i < n - 1; i++) {",
+    "        for (int j = 0; j < n - i - 1; j++) {",
+    "            if (arr[j] > arr[j + 1]) {",
+    "                // Swap elements",
+    "                int temp = arr[j];",
+    "                arr[j] = arr[j + 1];",
+    "                arr[j + 1] = temp;",
+    "            }",
+    "        }",
+    "    }",
+    "    return;",
+    "}",
+  ],
+  selectionSort: [
+    "void selectionSort(int arr[], int n) {",
+    "    for (int i = 0; i < n - 1; i++) {",
+    "        int minIndex = i;",
+    "        for (int j = i + 1; j < n; j++) {",
+    "            if (arr[j] < arr[minIndex]) {",
+    "                minIndex = j;",
+    "            }",
+    "        }",
+    "        swap(arr[i], arr[minIndex]);",
+    "    }",
+    "    return;",
+    "}",
+  ],
+  insertionSort: [
+    "void insertionSort(int arr[], int n) {",
+    "    for (int i = 1; i < n; i++) {",
+    "        int key = arr[i];",
+    "        int j = i - 1;",
+    "        while (j >= 0 && arr[j] > key) {",
+    "            arr[j + 1] = arr[j];",
+    "            j = j - 1;",
+    "        }",
+    "        arr[j + 1] = key;",
+    "    }",
+    "    return;",
+    "}",
+  ],
+  mergeSort: [
+    "void mergeSort(int arr[], int left, int right) {",
+    "    if (left < right) {",
+    "        int mid = left + (right - left) / 2;",
+    "        mergeSort(arr, left, mid);",
+    "        mergeSort(arr, mid + 1, right);",
+    "        merge(arr, left, mid, right);",
+    "    }",
+    "    return;",
+    "}",
+  ],
 };
 
 let myArray = [];
@@ -61,6 +119,34 @@ function renderBars() {
   });
 }
 
+function renderCode(algorithm) {
+  const code = codeSnippets[algorithm];
+  if (!code) {
+    codeDisplay.innerHTML = `<div class="error">No code available for ${algorithm}</div>`;
+    return;
+  }
+
+  codeDisplay.innerHTML = `<div class="code-line-wrapper">${code
+    .map(
+      (line, index) =>
+        `<div class="code-line" data-line="${index}">${line}</div>`
+    )
+    .join("")}</div>`;
+}
+
+function highlightLines(lines) {
+  document.querySelectorAll(".code-line").forEach((line) => {
+    line.classList.remove("highlight");
+  });
+
+  lines.forEach((lineNumber) => {
+    const line = document.querySelector(
+      `.code-line[data-line="${lineNumber}"]`
+    );
+    if (line) line.classList.add("highlight");
+  });
+}
+
 function restartTimeline() {
   progressBar.style.width = "0%";
   playPauseIcon.classList.remove("fa-pause");
@@ -73,6 +159,8 @@ function runSelectedAlgorithm() {
   // Get the selected value
   const selectedAlgorithm = algorithmDropdown.value;
   updateComplexity(selectedAlgorithm);
+  renderBars();
+  renderCode(selectedAlgorithm);
   // Run the selected sorting function
   if (selectedAlgorithm === "bubbleSort") {
     bubbleSort(myArray);
@@ -103,8 +191,11 @@ function bubbleSort(arr) {
   const bars = document.querySelectorAll(".bar");
   for (let i = 0; i < arr.length - 1; i++) {
     tl.set(iterationEle, { textContent: iterations++ });
+    tl.call(() => highlightLines([2]));
     for (let j = 0; j < arr.length - i - 1; j++) {
       // Select two bars
+
+      tl.to({}, { duration: 0.5 }).call(() => highlightLines([3]));
       tl.set(comparisonEle, { textContent: comparisons++ });
       tl.to(bars[j], { backgroundColor: "#d1507b", duration: 0.25 }, ">");
       tl.to(bars[j + 1], { backgroundColor: "#d1507b", duration: 0.25 }, "<");
@@ -113,6 +204,7 @@ function bubbleSort(arr) {
         // Swap two bars
         tl.set(swapEle, { textContent: swaps++ });
         [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+        tl.call(() => highlightLines([5, 6, 7]));
         tl.to(bars[j], { x: 34, ease: "power4.inOut" }), ">";
         tl.to(bars[j + 1], { x: -34, ease: "power4.inOut" }, "<");
 
@@ -153,6 +245,7 @@ function bubbleSort(arr) {
       ">"
     );
   }
+  tl.call(() => highlightLines([11]));
   tl.to(bars[0], { backgroundColor: "#50b1d1", duration: 0.25 }, ">");
 }
 
@@ -160,6 +253,7 @@ function selectionSort(arr) {
   // Get the bars
   const bars = document.querySelectorAll(".bar");
 
+  tl.call(() => highlightLines([1]));
   for (let i = 0; i < arr.length - 1; i++) {
     let minIndex = i;
 
@@ -167,15 +261,19 @@ function selectionSort(arr) {
     tl.to(bars[minIndex], { backgroundColor: "#d1507b", duration: 0.25 }, ">");
     tl.set(iterationEle, { textContent: iterations++ });
 
+    tl.call(() => highlightLines([3]));
     for (let j = i + 1; j < arr.length; j++) {
       // Highlight the current element being compared
       tl.to(bars[j], { backgroundColor: "#9f99e0", duration: 0.25 }, ">");
       tl.set(comparisonEle, { textContent: comparisons++ });
+
+      tl.call(() => highlightLines([4]));
       if (arr[j] < arr[minIndex]) {
         // Reset previous minimum's color
         tl.to(bars[minIndex], { backgroundColor: "#ddd", duration: 0.25 }, ">");
         minIndex = j;
 
+        tl.call(() => highlightLines([5]));
         // Highlight new minimum
         tl.to(
           bars[minIndex],
@@ -189,6 +287,7 @@ function selectionSort(arr) {
     }
 
     // Swap if minIndex changed
+    tl.call(() => highlightLines([8]));
     if (minIndex !== i) {
       [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
       tl.set(swapEle, { textContent: swaps++ });
@@ -228,6 +327,7 @@ function selectionSort(arr) {
     tl.to(bars[i], { backgroundColor: "#50b1d1", duration: 0.25 }, ">");
   }
 
+  tl.call(() => highlightLines([10]));
   // Mark the last element as sorted
   tl.to(
     bars[arr.length - 1],
@@ -308,7 +408,6 @@ algorithmDropdown.addEventListener("change", () => {
   // Reset the array variable
   myArray = [...originalArray];
 
-  renderBars();
   runSelectedAlgorithm();
 });
 
@@ -319,7 +418,7 @@ randomizeBtn.addEventListener("click", () => {
 
   myArray = generateRandomArray(nSlider.value);
   originalArray = [...myArray];
-  renderBars();
+
   runSelectedAlgorithm();
 });
 
@@ -370,7 +469,6 @@ nSlider.addEventListener("input", () => {
 // Starting Point
 myArray = generateRandomArray(nSlider.value);
 originalArray = [...myArray];
-renderBars();
 
 // Create Timeline
 let tl = gsap.timeline({

@@ -99,13 +99,13 @@ button:active {
 .stats-display,
 .anim-display,
 .code-display {
-  flex: 1; /* Equal width for each section */
   margin: 30px 10px;
   background-color: #111;
   box-shadow: 0 0px 10px #000000bb;
 }
 
 .stats-display {
+  flex: 0 0 20%;
   display: flex; /* Flex container for its children */
   flex-direction: column;
   justify-content: center;
@@ -117,6 +117,7 @@ button:active {
 }
 
 .anim-display {
+  flex: 1;
   display: flex; /* Flex container for its children */
   flex-direction: column;
   justify-content: center;
@@ -124,10 +125,36 @@ button:active {
 }
 
 .code-display {
-  display: flex; /* Flex container for its children */
-  flex-direction: column;
-  justify-content: center;
+  display: flex;
   align-items: center;
+  font-family: monospace;
+  font-size: 15px;
+  background-color: #111;
+  color: #f8f8f2;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+.code-line-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.code-line {
+  display: block; /* Ensures each line behaves like a block element */
+  white-space: pre; /* Preserve spaces and newlines */
+  margin: 0; /* Remove margin between lines */
+  padding: 0; /* Remove padding */
+  line-height: 2; /* Avoid extra space between lines */
+  width: 100%; /* Ensure lines take full width */
+}
+
+.code-line.highlight {
+  background-color: #484848;
+  color: #50fa7b;
+  font-weight: bold;
+  display: block;
 }
 
 .footer-controls {
