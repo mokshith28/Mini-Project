@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Searching</title>
+    <link rel="stylesheet" href="../visualizer-styles.css" />
     <link rel="stylesheet" href="styles.css" />
     <link
       rel="stylesheet"
@@ -29,9 +30,13 @@
     </div>
 
     <div class="viewport">
-      <div class="array-container"></div>
-      <div class="index-container"></div>
-      <div class="output">This is output section</div>
+      <div class="stats-display">Stats Section</div>
+      <div class="anim-display">
+        <div class="array-container"></div>
+        <div class="index-container"></div>
+        <div class="output">This is output section</div>
+      </div>
+      <div class="code-display">Code Section</div>
     </div>
 
     <div class="footer-controls">
@@ -73,11 +78,11 @@
             type="range"
             min="2"
             max="25"
-            value="6"
+            value="8"
             id="n-slider"
             class="n-slider"
           />
-          <span class="array-size-value">6</span>
+          <span class="array-size-value">8</span>
         </div>
         <button class="randomize">
           <i class="fa-solid fa-shuffle fa-lg"></i>

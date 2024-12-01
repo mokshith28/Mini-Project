@@ -16,7 +16,6 @@ const randomizeBtn = document.getElementsByClassName("randomize")[0];
 let myArray = [];
 let originalArray = [];
 let maxArrayValue = Math.max(...myArray);
-const maxBarHeight = 250;
 
 // Helper Functions
 function generateRandomArray(size) {
@@ -31,7 +30,8 @@ function renderBars() {
     bar.classList.add("bar");
 
     maxArrayValue = Math.max(...myArray);
-    const barHeight = (value / maxArrayValue) * maxBarHeight;
+    const barHeight =
+      (value / maxArrayValue) * arrayContainer.offsetHeight * 0.9;
     bar.style.height = `${barHeight}px`;
 
     const barValue = document.createElement("div");
@@ -92,10 +92,14 @@ function bubbleSort(arr) {
         tl.set(bars[j + 1], { x: 0 });
 
         tl.set(bars[j], {
-          height: `${(arr[j] / maxArrayValue) * maxBarHeight}px`,
+          height: `${
+            (arr[j] / maxArrayValue) * arrayContainer.offsetHeight * 0.9
+          }px`,
         });
         tl.set(bars[j + 1], {
-          height: `${(arr[j + 1] / maxArrayValue) * maxBarHeight}px`,
+          height: `${
+            (arr[j + 1] / maxArrayValue) * arrayContainer.offsetHeight * 0.9
+          }px`,
         });
 
         tl.set(bars[j].querySelector(".value"), {
@@ -136,7 +140,7 @@ function selectionSort(arr) {
 
     for (let j = i + 1; j < arr.length; j++) {
       // Highlight the current element being compared
-      tl.to(bars[j], { backgroundColor: "#b0abe0", duration: 0.25 }, ">");
+      tl.to(bars[j], { backgroundColor: "#9f99e0", duration: 0.25 }, ">");
 
       if (arr[j] < arr[minIndex]) {
         // Reset previous minimum's color
@@ -170,11 +174,15 @@ function selectionSort(arr) {
       // Reset positions and update heights after the swap
       tl.set(bars[i], {
         x: 0,
-        height: `${(arr[i] / maxArrayValue) * maxBarHeight}px`,
+        height: `${
+          (arr[i] / maxArrayValue) * arrayContainer.offsetHeight * 0.9
+        }px`,
       });
       tl.set(bars[minIndex], {
         x: 0,
-        height: `${(arr[minIndex] / maxArrayValue) * maxBarHeight}px`,
+        height: `${
+          (arr[minIndex] / maxArrayValue) * arrayContainer.offsetHeight * 0.9
+        }px`,
       });
 
       // Update bar values
@@ -218,7 +226,9 @@ function insertionSort(arr) {
       tl.to(bars[j], { x: 34, ease: "power4.inOut" }, ">");
 
       tl.set(bars[j + 1], {
-        height: `${(arr[j] / maxArrayValue) * maxBarHeight}px`,
+        height: `${
+          (arr[j] / maxArrayValue) * arrayContainer.offsetHeight * 0.9
+        }px`,
         x: 0,
       });
       tl.set(bars[j + 1].querySelector(".value"), {
@@ -243,7 +253,7 @@ function insertionSort(arr) {
 
     tl.to(bars[i], { x: 34 * (j + 1 - i), ease: "power4.inOut" }, ">");
     tl.set(bars[j + 1], {
-      height: `${(key / maxArrayValue) * maxBarHeight}px`,
+      height: `${(key / maxArrayValue) * arrayContainer.offsetHeight * 0.9}px`,
       x: 0,
     });
     tl.set(bars[j + 1].querySelector(".value"), { textContent: `${key}` });
