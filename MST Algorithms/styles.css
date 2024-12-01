@@ -1,0 +1,32 @@
+.graph-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 500px;
+  height: 500px;
+  background-color: #1a1a1a;
+  border: 1px solid #fff;
+}
+
+.vertex {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: #50d1d1;
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 30px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.edge {
+  position: absolute;
+  background-color: #d1507b;
+  width: 2px;
+  transform-origin: top left;
+  z-index: -1;
+}
