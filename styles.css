@@ -12,8 +12,7 @@ body {
 
 .main-container {
   text-align: center;
-  width: 90%;
-  max-width: 800px;
+  width: 80%;
 }
 
 .title {
@@ -51,7 +50,7 @@ body {
 .btn {
   display: inline-block;
   padding: 10px 20px;
-  background: #e3e3e3;
+  background: #c5c5c5;
   color: #222;
   text-decoration: none;
   font-size: 1rem;
@@ -59,5 +58,5 @@ body {
 }
 
 .btn:hover {
-  background: #aaa;
+  background: #f1f1f1;
 }

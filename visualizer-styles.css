@@ -41,11 +41,11 @@ span {
 }
 
 .stats-value p {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .stats-value span {
-  font-size: 19px;
+  font-size: 17px;
   font-weight: bold;
 }
 
@@ -105,7 +105,7 @@ button:active {
 }
 
 .stats-display {
-  flex: 0 0 20%;
+  flex: 0 0 18%;
   display: flex; /* Flex container for its children */
   flex-direction: column;
   justify-content: center;
@@ -120,7 +120,7 @@ button:active {
   flex: 1;
   display: flex; /* Flex container for its children */
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
 }
 

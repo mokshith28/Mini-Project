@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dijkstra Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            flex-direction: column;
+        }
+
+        #container {
+            display: grid;
+            grid-template-columns: repeat(20, 30px);
+            grid-template-rows: repeat(20, 30px);
+            gap: 2px;
+            margin: 20px;
+        }
+
+        .node {
+            width: 30px;
+            height: 30px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .start {
+            background-color: #2ecc71;
+        }
+
+        .end {
+            background-color: #e74c3c;
+        }
+
+        .wall {
+            background-color: #34495e;
+        }
+
+        .visited {
+            background-color: #3498db;
+        }
+
+        .path {
+            background-color: #9b59b6;
+        }
+
+        .controls {
+            margin: 20px;
+            text-align: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .btn:disabled {
+            background-color: #bdc3c7;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-container input {
+            margin: 5px;
+            padding: 5px;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <header><a href="/index.html" class="Shortest path">Shortest path</a></header>
+    <div class="input-container">
+        <label for="grid-size">Grid Size (N x N):</label>
+        <input type="number" id="grid-size" value="20" min="5" max="30" />
+        <label for="start-row">Start Row:</label>
+        <input type="number" id="start-row" value="0" min="0" max="29" />
+        <label for="start-col">Start Column:</label>
+        <input type="number" id="start-col" value="0" min="0" max="29" />
+        <label for="end-row">End Row:</label>
+        <input type="number" id="end-row" value="19" min="0" max="29" />
+        <label for="end-col">End Column:</label>
+        <input type="number" id="end-col" value="19" min="0" max="29" />
+        <button class="btn" id="set-grid">Set Grid</button>
+        <label for="walls">Walls (comma-separated row,col):</label>
+        <input type="text" id="walls" placeholder="1,1 2,2 3,3" />
+        <button class="btn" id="startBtn">Start</button>
+        <button class="btn" id="clearBtn">Clear</button>
+
+        <div class="speed-control">
+            <label for="speed">Speed (px per step):</label>
+            <input type="range" id="speed" min="1" max="10" value="1" step="1" />
+            <span id="speed-value">1px</span>
+        </div>
+    </div>
+
+    <div id="container"></div>
+
+    <script>
+        const container = document.getElementById('container');
+        const setGridBtn = document.getElementById('set-grid');
+        const startBtn = document.getElementById('startBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const speedInput = document.getElementById('speed');
+        const speedValue = document.getElementById('speed-value');
+
+        let rows, cols;
+        let startNode = null;
+        let endNode = null;
+        let walls = new Set();
+        let visited = new Set();
+        let path = [];
+        let stepInterval;
+        let speedInPixels = 1;
+
+        // Create a grid based on input size
+        function setGrid() {
+            rows = parseInt(document.getElementById('grid-size').value);
+            cols = rows;
+
+            container.innerHTML = '';
+
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const node = document.createElement('div');
+                    node.classList.add('node');
+                    node.dataset.row = row;
+                    node.dataset.col = col;
+                    container.appendChild(node);
+
+                    node.addEventListener('click', () => handleNodeClick(node));
+                }
+            }
+        }
+
+        // Handle Node Clicks for Start, End, and Wall
+        function handleNodeClick(node) {
+            const row = node.dataset.row;
+            const col = node.dataset.col;
+
+            // If the start node is not set yet, set it
+            if (startNode === null) {
+                node.classList.add('start');
+                startNode = { row, col };
+            }
+            // If the end node is not set yet, set it
+            else if (endNode === null && node !== document.querySelector('.start')) {
+                node.classList.add('end');
+                endNode = { row, col };
+            }
+            // Toggle wall status
+            else if (!node.classList.contains('start') && !node.classList.contains('end')) {
+                node.classList.toggle('wall');
+                const position = `${row},${col}`;
+                if (node.classList.contains('wall')) {
+                    walls.add(position);
+                } else {
+                    walls.delete(position);
+                }
+            }
+        }
+
+        // Dijkstra Algorithm with pixel-based step visualization
+        function dijkstra() {
+            if (!startNode || !endNode) {
+                return alert('Please select both start and end nodes!');
+            }
+
+            const start = { row: parseInt(startNode.row), col: parseInt(startNode.col) };
+            const end = { row: parseInt(endNode.row), col: parseInt(endNode.col) };
+
+            const pq = new PriorityQueue();
+            const distances = {};
+            const previous = {};
+
+            // Initialize distances and previous nodes
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const nodeKey = `${row},${col}`;
+                    distances[nodeKey] = Infinity;
+                    previous[nodeKey] = null;
+                    pq.enqueue({ row, col, distance: distances[nodeKey] });
+                }
+            }
+
+            distances[`${start.row},${start.col}`] = 0;
+            pq.updatePriority(start.row, start.col, 0);
+
+            // Step by step Dijkstra visualization
+            stepInterval = setInterval(() => {
+                if (pq.isEmpty()) {
+                    clearInterval(stepInterval);
+                    return;
+                }
+
+                const current = pq.dequeue();
+                const { row, col } = current;
+
+                // Stop if we reach the end node
+                if (`${row},${col}` === `${end.row},${end.col}`) {
+                    clearInterval(stepInterval); // Stop the interval once we reach the destination
+                    reconstructPath(previous, start, end); // Reconstruct and display the path
+                    return;
+                }
+
+                const neighbors = getNeighbors(row, col);
+                for (const { r, c } of neighbors) {
+                    if (walls.has(`${r},${c}`)) continue;
+
+                    const alt = distances[`${row},${col}`] + 1;
+                    const neighborKey = `${r},${c}`;
+
+                    if (alt < distances[neighborKey]) {
+                        distances[neighborKey] = alt;
+                        previous[neighborKey] = current;
+                        pq.updatePriority(r, c, alt);
+                    }
+                }
+
+                markVisited(row, col);
+            }, speedInPixels);  // Adjust speed based on pixel movement
+        }
+
+        // PriorityQueue Implementation
+        class PriorityQueue {
+            constructor() {
+                this.nodes = [];
+            }
+
+            enqueue(node) {
+                this.nodes.push(node);
+                this.nodes.sort((a, b) => a.distance - b.distance);
+            }
+
+            dequeue() {
+                return this.nodes.shift();
+            }
+
+            updatePriority(row, col, newDistance) {
+                const index = this.nodes.findIndex(node => node.row === row && node.col === col);
+                if (index !== -1) {
+                    this.nodes[index].distance = newDistance;
+                    this.nodes.sort((a, b) => a.distance - b.distance);
+                }
+            }
+
+            isEmpty() {
+                return this.nodes.length === 0;
+            }
+        }
+
+        // Get neighbors of a node
+        function getNeighbors(row, col) {
+            const neighbors = [];
+            const directions = [
+                [-1, 0], [1, 0], [0, -1], [0, 1], // Up, Down, Left, Right
+            ];
+            for (const [dr, dc] of directions) {
+                const r = row + dr;
+                const c = col + dc;
+                if (r >= 0 && r < rows && c >= 0 && c < cols) {
+                    neighbors.push({ r, c });
+                }
+            }
+            return neighbors;
+        }
+
+        // Mark a node as visited
+        function markVisited(row, col) {
+            const node = document.querySelector(`[data-row='${row}'][data-col='${col}']`);
+            node.classList.add('visited');
+        }
+
+        // Reconstruct the path from the previous nodes
+        function reconstructPath(previous, start, end) {
+            let current = `${end.row},${end.col}`;
+            while (current !== `${start.row},${start.col}`) {
+                const node = document.querySelector(`[data-row='${current.split(',')[0]}'][data-col='${current.split(',')[1]}']`);
+                node.classList.add('path');
+                current = `${previous[current].row},${previous[current].col}`;
+            }
+            const startNodeElement = document.querySelector(`[data-row='${start.row}'][data-col='${start.col}']`);
+            startNodeElement.classList.add('start');
+        }
+
+        // Clear the grid
+        function clearGrid() {
+            startNode = null;
+            endNode = null;
+            walls.clear();
+            visited.clear();
+            path = [];
+            container.innerHTML = '';
+            setGrid();
+        }
+
+        // Handle speed slider change
+        speedInput.addEventListener('input', () => {
+            speedInPixels = parseInt(speedInput.value);
+            speedValue.textContent = `${speedInPixels}px`;
+        });
+
+        // Set up the grid on initial load
+        setGrid();
+
+        // Add event listeners for buttons
+        setGridBtn.addEventListener('click', setGrid);
+        startBtn.addEventListener('click', dijkstra);
+        clearBtn.addEventListener('click', clearGrid);
+
+    </script>
+</body>
+</html>

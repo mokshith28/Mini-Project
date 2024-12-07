@@ -12,22 +12,14 @@
     />
   </head>
   <body>
-    <header><a href="../index.html" class="sort-scope">Sort Scope</a></header>
+    <header>
+      <a href="../index.html" class="sort-scope">Sort Scope 🔭</a>
+    </header>
 
     <select id="algorithmDropdown" class="algorithmDropdown">
       <option value="linearSearch" selected>Linear Search</option>
       <option value="binarySearch">Binary Search</option>
     </select>
-
-    <div class="search-controls">
-      <input
-        type="number"
-        id="search-key"
-        class="search-key"
-        placeholder="Enter key to search"
-      />
-      <button id="search-button" class="search-button">Search</button>
-    </div>
 
     <div class="viewport">
       <div class="stats-display">
@@ -43,6 +35,15 @@
         </div>
       </div>
       <div class="anim-display">
+        <div class="search-controls">
+          <input
+            type="number"
+            id="search-key"
+            class="search-key"
+            placeholder="Enter key to search"
+          />
+          <button id="search-button" class="search-button">Search</button>
+        </div>
         <div class="array-container"></div>
         <div class="index-container"></div>
         <div class="output">This is output section</div>
@@ -89,11 +90,11 @@
             type="range"
             min="2"
             max="15"
-            value="10"
+            value="12"
             id="n-slider"
             class="n-slider"
           />
-          <span class="array-size-value">10</span>
+          <span class="array-size-value">12</span>
         </div>
         <button class="randomize">
           <i class="fa-solid fa-shuffle fa-lg"></i>
