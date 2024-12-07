@@ -613,6 +613,14 @@ speedControl.addEventListener("change", (e) => {
 
 nSlider.addEventListener("input", () => {
   nValue.textContent = nSlider.value;
+  restartTimeline();
+  tl.clear();
+  resetStats();
+
+  myArray = generateRandomArray(nSlider.value);
+  originalArray = [...myArray];
+
+  runSelectedAlgorithm();
 });
 
 // Starting Point

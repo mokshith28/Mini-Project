@@ -413,6 +413,15 @@ speedControl.addEventListener("change", (e) => {
 
 nSlider.addEventListener("input", () => {
   nValue.textContent = nSlider.value;
+  restartTimeline();
+  tl.clear();
+
+  myArray = generateRandomArray(nSlider.value);
+  if (algorithmDropdown.value === "binarySearch") {
+    myArray.sort((a, b) => a - b);
+  }
+  originalArray = [...myArray];
+  renderBoxes();
 });
 
 // Starting Point

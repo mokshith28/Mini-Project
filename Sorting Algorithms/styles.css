@@ -31,8 +31,12 @@
 }
 
 .index-container {
+  padding: 0 10px;
+  width: 90%;
   display: flex;
   margin-top: -20px;
+  align-items: center;
+  justify-content: center;
 }
 
 .index {

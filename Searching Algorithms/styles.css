@@ -9,7 +9,7 @@
 
 .array-container {
   height: auto;
-  width: 90%;
+  max-width: 90%;
   padding: 10px 10px;
   display: flex;
   flex-direction: row;
@@ -40,13 +40,12 @@
   display: flex;
   justify-content: center; /* Match the array container's spacing */
   align-items: center;
-  margin-top: 5px;
+  margin-top: -70px;
   gap: 10px;
 }
 
 .index {
   width: 50px; /* Match the size of the array elements */
-  margin-top: -120px;
   text-align: center;
   font-size: 12px;
 }
@@ -55,7 +54,7 @@
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
-  height: 100px; /* Set a fixed height if necessary */
+  height: 120px; /* Set a fixed height if necessary */
   width: 90%; /* Make it span the width of its container */
   background-color: #222; /* Optional: Add a background to make it stand out */
   color: #fff; /* Optional: Text color */
