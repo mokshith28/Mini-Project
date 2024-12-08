@@ -1,0 +1,27 @@
+.node {
+  width: 30px;
+  height: 30px;
+  background: #3498db;
+  border-radius: 50%;
+  position: absolute;
+  text-align: center;
+  line-height: 30px;
+  color: white;
+  font-weight: bold;
+}
+
+.edge {
+  position: absolute;
+  color: #333;
+  font-size: 14px;
+}
+
+.mst-edge {
+  color: green;
+  font-weight: bold;
+}
+
+.rejected-edge {
+  color: red;
+  text-decoration: line-through;
+}

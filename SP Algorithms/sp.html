@@ -3,12 +3,87 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SP</title>
+    <title>Bubble Sort</title>
+    <link rel="stylesheet" href="../visualizer-styles.css" />
     <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
   </head>
   <body>
-    This is SP page.
+    <header>
+      <a href="../index.html" class="sort-scope">Sort Scope 🔭</a>
+    </header>
+
+    <select id="algorithmDropdown" class="algorithmDropdown">
+      <option value="kruskal" selected>Kruskal</option>
+      <option value="prims">Prims</option>
+    </select>
+
+    <div class="viewport">
+      <div class="stats-display">
+        <h2>Statistics</h2>
+        <div class="stats-value"></div>
+      </div>
+      <div class="anim-display">
+        <div class="array-container"></div>
+      </div>
+      <div class="code-display">Code Section</div>
+    </div>
+
+    <div class="footer-controls">
+      <div class="media-playback">
+        <div class="progress-bar-container">
+          <div class="progress-bar"></div>
+        </div>
+        <div class="btn-container">
+          <select id="speed-control" class="speed-control">
+            <option value="0.5">0.5x</option>
+            <option value="1" selected>1x</option>
+            <option value="2">2x</option>
+            <option value="3">3x</option>
+            <option value="5">5x</option>
+            <option value="10">10x</option>
+          </select>
+
+          <div class="play-direction">
+            <button class="reverse">
+              <i class="fa-solid fa-backward fa-lg"></i>
+            </button>
+            <button class="play">
+              <i id="playPauseIcon" class="fa-solid fa-play fa-xl"></i>
+            </button>
+            <button class="forward">
+              <i class="fa-solid fa-forward fa-lg"></i>
+            </button>
+          </div>
+
+          <button class="restart">
+            <i class="fa-solid fa-rotate-right fa-lg"></i>
+          </button>
+        </div>
+      </div>
+      <div class="array-controls">
+        <div class="array-size-control">
+          <label class="size-lable" for="n-slider">N =</label>
+          <input
+            type="range"
+            min="2"
+            max="20"
+            value="10"
+            id="n-slider"
+            class="n-slider"
+          />
+          <span class="array-size-value">10</span>
+        </div>
+        <button class="randomize">
+          <i class="fa-solid fa-shuffle fa-lg"></i>
+        </button>
+      </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-    <script src="script.js"></script>
+    <script type="text/javascript" src="script.js"></script>
   </body>
 </html>
