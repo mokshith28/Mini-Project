@@ -1,27 +1,58 @@
+textarea {
+  width: 200px;
+  height: 150px;
+  padding: 10px;
+  margin: 10px;
+  font-size: 16px;
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  resize: vertical;
+  outline: none;
+}
+
+textarea:focus {
+  border-color: #429dff; /* Change border color on focus */
+  box-shadow: 0 0 5px rgba(56, 152, 255, 0.5); /* Add focus glow */
+}
+
+.gen-graph {
+  color: #fff;
+  background-color: #222;
+  padding: 10px;
+  border: 1px solid #fff;
+}
+.gen-graph:hover {
+  border: 1px solid #ccc;
+}
+.gen-graph:active {
+  background-color: #111;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+}
 .node {
-  width: 30px;
-  height: 30px;
-  background: #3498db;
-  border-radius: 50%;
-  position: absolute;
-  text-align: center;
-  line-height: 30px;
-  color: white;
-  font-weight: bold;
+  fill: #2298ff;
+  stroke: #fff;
+  stroke-width: 1px;
+  cursor: pointer;
 }
-
 .edge {
-  position: absolute;
-  color: #333;
-  font-size: 14px;
+  stroke: #ddd;
+  stroke-width: 2px;
 }
-
-.mst-edge {
-  color: green;
-  font-weight: bold;
+.label {
+  font-size: 15px;
+  font-family: Arial, sans-serif;
+  fill: #fff;
+  pointer-events: none; /* Prevent interaction with the text */
+  user-select: text; /* Allow the text to be selected */
 }
-
-.rejected-edge {
-  color: red;
-  text-decoration: line-through;
+.edge-label {
+  font-size: 20px;
+  font-family: Arial, sans-serif;
+  fill: #ff4a4a;
 }

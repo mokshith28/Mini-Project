@@ -23,11 +23,15 @@
 
     <div class="viewport">
       <div class="stats-display">
-        <h2>Statistics</h2>
-        <div class="stats-value"></div>
+        <h2>Input</h2>
+        <textarea
+          id="adjacencyMatrixInput"
+          placeholder="Enter adjacency matrix (space separated)"
+        ></textarea>
+        <button class="gen-graph">Generate Graph</button>
       </div>
       <div class="anim-display">
-        <div class="array-container"></div>
+        <svg id="graph"></svg>
       </div>
       <div class="code-display">Code Section</div>
     </div>
@@ -64,25 +68,9 @@
           </button>
         </div>
       </div>
-      <div class="array-controls">
-        <div class="array-size-control">
-          <label class="size-lable" for="n-slider">N =</label>
-          <input
-            type="range"
-            min="2"
-            max="20"
-            value="10"
-            id="n-slider"
-            class="n-slider"
-          />
-          <span class="array-size-value">10</span>
-        </div>
-        <button class="randomize">
-          <i class="fa-solid fa-shuffle fa-lg"></i>
-        </button>
-      </div>
     </div>
 
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script type="text/javascript" src="script.js"></script>
   </body>
