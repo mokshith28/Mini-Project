@@ -415,6 +415,7 @@ function insertionSort(arr) {
 
     tl.call(() => highlightLines([4])); // Picking the key
     while (j >= 0 && arr[j] > key) {
+      tl.set(comparisonEle, { textContent: comparisons++ });
       tl.call(() => highlightLines([5, 6])); // Condition check
       // Move the current element one position to the right
       tl.to(bars[j + 1], { backgroundColor: "#9f99e0", duration: 0.25 });
