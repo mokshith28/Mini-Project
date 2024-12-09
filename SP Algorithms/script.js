@@ -123,6 +123,18 @@ function renderGraph(matrix) {
     .attr("y", (d) => d.y + 5)
     .attr("text-anchor", "middle")
     .text((d) => `${d.id}`);
+
+  svg
+    .selectAll(".distance-label")
+    .data(nodes)
+    .enter()
+    .append("text")
+    .attr("id", (d) => `distance-label-${d.id}`)
+    .attr("class", "distance-label")
+    .attr("x", (d) => d.x)
+    .attr("y", (d) => d.y + 30)
+    .attr("text-anchor", "middle")
+    .text(() => "∞");
 }
 
 function renderCode(algorithm) {
@@ -177,6 +189,12 @@ function dragged(event, d) {
     .filter((n) => n.id === d.id)
     .attr("x", d.x)
     .attr("y", d.y + 5);
+
+  svg
+    .selectAll(".distance-label")
+    .filter((n) => n.id === d.id)
+    .attr("x", d.x)
+    .attr("y", d.y + 30);
 }
 
 function dragEnded(event, d) {
@@ -210,79 +228,62 @@ function runSelectedAlgorithm() {
   renderCode(selectedAlgorithm);
   // Run the selected sorting function
   if (selectedAlgorithm === "dijkstra") {
-    dijkstra();
+    const startNode = parseInt(document.getElementById("startNodeInput").value);
+    dijkstra(startNode);
   }
 }
 
 // MST Algorithms
-function dijkstra() {
-  const svg = d3.select("svg");
+function dijkstra(startNode) {
   const distances = Array(nodes.length).fill(Infinity);
-  const previous = Array(nodes.length).fill(null);
   const visited = Array(nodes.length).fill(false);
-
-  const startNode = 0; // Start node (can be modified)
   distances[startNode] = 0;
 
-  const priorityQueue = [{ node: startNode, distance: 0 }];
-
-  // Highlight: Initialize distances and priority queue
-  tl.call(() => highlightLines([0, 1]));
+  const priorityQueue = [];
+  priorityQueue.push({ node: startNode, distance: 0 });
 
   while (priorityQueue.length > 0) {
-    // Sort queue by distance and pick the node with the smallest distance
     priorityQueue.sort((a, b) => a.distance - b.distance);
-    const { node: currentNode } = priorityQueue.shift();
+    const current = priorityQueue.shift();
 
-    if (visited[currentNode]) continue;
-    visited[currentNode] = true;
+    if (visited[current.node]) continue;
+    visited[current.node] = true;
 
-    // Highlight: Visit node
-    tl.call(() => highlightLines([2, 3]));
-    tl.to(`#node-${currentNode}`, { fill: "#ff8c2e", duration: 0.5 });
+    tl.to(`#node-${current.node}`, { fill: "#ff9f50", duration: 0.25 });
 
-    edges.forEach((edge) => {
-      const neighbor =
-        edge.u === currentNode
-          ? edge.v
-          : edge.v === currentNode
-          ? edge.u
-          : null;
+    for (let neighbor = 0; neighbor < adjacencyMatrix.length; neighbor++) {
+      const weight = adjacencyMatrix[current.node][neighbor];
+      if (weight > 0 && !visited[neighbor]) {
+        const newDistance = distances[current.node] + weight;
+        if (newDistance < distances[neighbor]) {
+          distances[neighbor] = newDistance;
+          priorityQueue.push({ node: neighbor, distance: newDistance });
 
-      if (neighbor === null || visited[neighbor]) return;
+          tl.to(
+            `#edge-${
+              edges.find(
+                (e) =>
+                  (e.u === current.node && e.v === neighbor) ||
+                  (e.u === neighbor && e.v === current.node)
+              ).id
+            }`,
+            {
+              stroke: "#ff9f50",
+              strokeWidth: 4,
+              duration: 0.25,
+            }
+          );
 
-      const newDistance = distances[currentNode] + edge.weight;
-
-      if (newDistance < distances[neighbor]) {
-        distances[neighbor] = newDistance;
-        previous[neighbor] = currentNode;
-
-        // Update edge label and color
-        tl.call(() => highlightLines([4, 5, 6]));
-        tl.to(`#edge-label-${edge.id}`, {
-          text: `${newDistance}`,
-          fill: "#fff",
-        });
-
-        // Update priority queue
-        priorityQueue.push({ node: neighbor, distance: newDistance });
+          tl.set(`#distance-label-${neighbor}`, {
+            textContent: newDistance,
+          });
+        }
       }
-    });
+    }
   }
 
-  // Highlight: Final distances and paths
-  tl.call(() => highlightLines([7]));
   console.log("Shortest distances:", distances);
-  console.log("Previous nodes:", previous);
 }
-
-// Event Listeners
-algorithmDropdown.addEventListener("change", () => {
-  restartTimeline();
-  tl.clear();
-
-  runSelectedAlgorithm();
-});
 
 genGraphBtn.addEventListener("click", () => {
   restartTimeline();
@@ -349,3 +350,5 @@ let tl = gsap.timeline({
     playPauseIcon.classList.add("fa-play");
   },
 });
+
+renderCode(algorithmDropdown.value);

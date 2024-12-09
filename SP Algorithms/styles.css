@@ -67,3 +67,20 @@ svg {
   stroke: #ff5733; /* Highlighted edges during processing */
   stroke-width: 2;
 }
+
+.distance-label {
+  font-size: 15px;
+  font-family: Arial, sans-serif;
+  fill: rgb(255, 255, 255);
+  pointer-events: none;
+  user-select: text;
+}
+
+input {
+  width: 80px;
+  padding: 5px;
+  margin: 10px;
+  font-size: 16px;
+  background-color: #222;
+  color: #fff;
+}
