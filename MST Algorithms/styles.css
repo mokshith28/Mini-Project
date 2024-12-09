@@ -40,6 +40,10 @@ svg {
   stroke-width: 1px;
   cursor: pointer;
 }
+.edge {
+  stroke: #ddd;
+  stroke-width: 2px;
+}
 .label {
   font-size: 15px;
   font-family: Arial, sans-serif;
@@ -51,19 +55,4 @@ svg {
   font-size: 20px;
   font-family: Arial, sans-serif;
   fill: #ff4a4a;
-}
-.node.visited {
-  fill: #f39c12; /* Change color for visited nodes */
-  stroke: #c0392b;
-  stroke-width: 2;
-}
-
-.edge {
-  stroke: #3498db; /* Default color for edges */
-  stroke-width: 1;
-}
-
-.edge.highlighted {
-  stroke: #ff5733; /* Highlighted edges during processing */
-  stroke-width: 2;
 }

@@ -14,29 +14,17 @@ let edges = [];
 let adjacencyMatrix = [];
 
 const codeSnippets = {
-  prims: [
-    "Initialize MST = {}",
-    "Initialize priority queue Q with the start vertex",
-    "Set key value of the start vertex to 0",
-    "While Q is not empty:",
-    "  u = vertex with minimum key in Q",
-    "  Remove u from Q",
+  dijkstra: [
+    "Initialize distance array: inf for all nodes, 0 for start",
+    "Initialize PQ, add start node with distance 0",
+    "While PQ is not empty:",
+    "  u = node with min distance in PQ",
+    "  Remove u from PQ",
     "  For each neighbor v of u:",
-    "    If v is in Q and weight(u, v) < key[v]:",
-    "      Update key[v] = weight(u, v)",
-    "      Set parent[v] = u",
-    "MST is formed by the parent relationships",
-  ],
-
-  kruskal: [
-    "Sort edges E by increasing weight",
-    "Initialize empty MST = {}",
-    "For each edge e in E:",
-    "  If adding e to MST does not form a cycle:",
-    "    Add e to MST",
-    "  Else:",
-    "    Ignore e",
-    "Return MST",
+    "    d = distance[u] + w(u, v)",
+    "    If d < distance[v], update distance[v]",
+    "    If v not in PQ, add v with updated distance",
+    "Return distance array when PQ is empty",
   ],
 };
 
@@ -48,7 +36,7 @@ function renderGraph(matrix) {
 
   // Create nodes based on matrix size
   for (let i = 0; i < matrix.length; i++) {
-    nodes.push({ id: i, x: 100 + i * 120, y: 100 + Math.random() * 250 });
+    nodes.push({ id: i, x: 50 + i * 100, y: 100 + Math.random() * 250 });
   }
 
   // Convert adjacency matrix to edge list
@@ -221,147 +209,71 @@ function runSelectedAlgorithm() {
   const selectedAlgorithm = algorithmDropdown.value;
   renderCode(selectedAlgorithm);
   // Run the selected sorting function
-  if (selectedAlgorithm === "prims") {
-    prims();
-  } else if (selectedAlgorithm === "kruskal") {
-    kruskal();
+  if (selectedAlgorithm === "dijkstra") {
+    dijkstra();
   }
 }
 
 // MST Algorithms
-function kruskal() {
+function dijkstra() {
   const svg = d3.select("svg");
-
-  // Kruskal's algorithm
-  const mst = [];
-  const parent = Array(nodes.length)
-    .fill(null)
-    .map((_, i) => i);
-
-  function find(x) {
-    if (parent[x] === x) return x;
-    return (parent[x] = find(parent[x]));
-  }
-
-  function union(x, y) {
-    const rootX = find(x);
-    const rootY = find(y);
-    if (rootX !== rootY) parent[rootX] = rootY;
-  }
-
-  edges.sort((a, b) => a.weight - b.weight);
-
-  for (const edge of edges) {
-    const { u, v, id } = edge;
-
-    tl.call(() => highlightLines([3]));
-    if (find(u) !== find(v)) {
-      union(u, v);
-      mst.push(edge);
-
-      tl.to(`#node-${u}`, { fill: "#ff8c2e" });
-      tl.to(`#edge-${id}`, { stroke: "#ff8c2e", strokeWidth: 4 });
-      tl.to(`#edge-label-${id}`, { fill: "#eee" }, "<");
-      tl.call(() => highlightLines([4]));
-      tl.to(`#node-${v}`, { fill: "#ff8c2e" });
-    } else {
-      tl.call(() => highlightLines([6]));
-      tl.to(`#edge-${id}`, { stroke: "#ddd3", strokeWidth: 3 });
-      tl.to(`#edge-label-${id}`, { fill: "#ddd3" }, "<");
-    }
-  }
-
-  tl.call(() => highlightLines([7]));
-
-  console.log("MST Edges:", mst);
-}
-function prims() {
-  const svg = d3.select("svg");
-  const mst = [];
+  const distances = Array(nodes.length).fill(Infinity);
+  const previous = Array(nodes.length).fill(null);
   const visited = Array(nodes.length).fill(false);
 
-  const edgesQueue = [];
-  let currentNode = 0; // Start from the first node
-  visited[currentNode] = true;
+  const startNode = 0; // Start node (can be modified)
+  distances[startNode] = 0;
 
-  // Highlight: Initialize MST = {} (Line 0)
-  tl.call(() => highlightLines([0]));
+  const priorityQueue = [{ node: startNode, distance: 0 }];
 
-  // Add initial edges from the first node to the priority queue
-  addEdgesToQueue(currentNode);
+  // Highlight: Initialize distances and priority queue
+  tl.call(() => highlightLines([0, 1]));
 
-  // Highlight: Initialize priority queue Q with the start vertex (Line 1)
-  tl.call(() => highlightLines([1]));
+  while (priorityQueue.length > 0) {
+    // Sort queue by distance and pick the node with the smallest distance
+    priorityQueue.sort((a, b) => a.distance - b.distance);
+    const { node: currentNode } = priorityQueue.shift();
 
-  while (edgesQueue.length > 0) {
-    // Find the smallest edge
-    edgesQueue.sort((a, b) => a.weight - b.weight);
-    const smallestEdge = edgesQueue.shift();
+    if (visited[currentNode]) continue;
+    visited[currentNode] = true;
 
-    const { id, u, v } = smallestEdge;
+    // Highlight: Visit node
+    tl.call(() => highlightLines([2, 3]));
+    tl.to(`#node-${currentNode}`, { fill: "#ff8c2e", duration: 0.5 });
 
-    // Highlight: u = vertex with minimum key in Q (Line 3)
-    tl.call(() => highlightLines([3]));
-
-    // Remove u from Q
-    tl.call(() => highlightLines([4]));
-
-    // Check if the edge connects to an unvisited node
-    if (visited[u] && visited[v]) {
-      // Highlight: If edge is not part of MST (skipping it)
-      tl.call(() => highlightLines([6]));
-      tl.to(`#edge-${id}`, { stroke: "#ddd3", strokeWidth: 2 });
-      tl.to(`#edge-label-${id}`, { fill: "#ddd3" }, "<");
-      continue;
-    }
-
-    // Add the edge to the MST
-    mst.push(smallestEdge);
-
-    // Highlight: Update MST (parent relationship) (Line 8)
-    tl.call(() => highlightLines([8]));
-    tl.to(`#edge-${id}`, { stroke: "#ff8c2e", strokeWidth: 4 }, "+=0.25");
-    tl.to(`#edge-label-${id}`, { fill: "#fff" }, "<");
-
-    const nextNode = visited[u] ? v : u;
-    tl.to(`#node-${nextNode}`, { fill: "#ff8c2e", duration: 0.25 }, ">");
-
-    // Mark the node as visited and add its edges
-    visited[nextNode] = true;
-
-    // Highlight: Add edges to queue (Line 9)
-    tl.call(() => highlightLines([9]));
-    addEdgesToQueue(nextNode);
-  }
-
-  // Highlight: MST formation complete (Line 10)
-  tl.call(() => highlightLines([10]));
-
-  // Highlight remaining edges in a different color
-  edges.forEach((edge) => {
-    const isInMST = mst.some((mstEdge) => mstEdge.id === edge.id);
-    if (!isInMST) {
-      tl.to(`#edge-${edge.id}`, {
-        stroke: "#ddd3",
-        strokeWidth: 2,
-        duration: 0.5,
-      });
-      tl.to(`#edge-label-${edge.id}`, { fill: "#ddd3", duration: 0.5 }, "<");
-    }
-  });
-
-  console.log("MST Edges:", mst);
-
-  // Helper function to add edges from a node to the priority queue
-  function addEdgesToQueue(node) {
     edges.forEach((edge) => {
-      if (edge.u === node && !visited[edge.v]) {
-        edgesQueue.push(edge);
-      } else if (edge.v === node && !visited[edge.u]) {
-        edgesQueue.push(edge);
+      const neighbor =
+        edge.u === currentNode
+          ? edge.v
+          : edge.v === currentNode
+          ? edge.u
+          : null;
+
+      if (neighbor === null || visited[neighbor]) return;
+
+      const newDistance = distances[currentNode] + edge.weight;
+
+      if (newDistance < distances[neighbor]) {
+        distances[neighbor] = newDistance;
+        previous[neighbor] = currentNode;
+
+        // Update edge label and color
+        tl.call(() => highlightLines([4, 5, 6]));
+        tl.to(`#edge-label-${edge.id}`, {
+          text: `${newDistance}`,
+          fill: "#fff",
+        });
+
+        // Update priority queue
+        priorityQueue.push({ node: neighbor, distance: newDistance });
       }
     });
   }
+
+  // Highlight: Final distances and paths
+  tl.call(() => highlightLines([7]));
+  console.log("Shortest distances:", distances);
+  console.log("Previous nodes:", previous);
 }
 
 // Event Listeners
