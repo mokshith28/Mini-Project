@@ -16,6 +16,7 @@ const nValue = document.getElementsByClassName("array-size-value")[0];
 const randomizeBtn = document.getElementsByClassName("randomize")[0];
 const searchBtn = document.getElementsByClassName("search-button")[0];
 const iValueEle = document.getElementById("i-value");
+const eleValueEle = document.getElementById("element-value");
 const comparisonEle = document.getElementById("comparisons");
 const lowIndexEle = document.getElementById("low-index");
 const highIndexEle = document.getElementById("high-index");
@@ -25,6 +26,24 @@ const codeDisplay = document.getElementsByClassName("code-display")[0];
 const complexity = {
   linearSearch: { time: "O(N)", space: "O(1)" },
   binarySearch: { time: "O(N log N)", space: "O(1)" },
+};
+
+const statsVisibility = {
+  linearSearch: [
+    "i-value",
+    "element-value",
+    "comparisons",
+    "time-complexity",
+    "space-complexity",
+  ],
+  binarySearch: [
+    "low-index",
+    "mid-index",
+    "high-index",
+    "comparisons",
+    "time-complexity",
+    "space-complexity",
+  ],
 };
 
 const codeSnippets = {
@@ -60,7 +79,8 @@ let myArray = [];
 let originalArray = [];
 let maxArrayValue = Math.max(...myArray);
 let comparisons = 0;
-let ivalue = 0;
+let iValue = 0;
+let eleValue = 0;
 
 // Helper Functions
 function generateRandomArray(size) {
@@ -139,7 +159,8 @@ function runSelectedAlgorithm() {
 
 function resetStats() {
   comparisons = 0;
-  ivalue = 0;
+  iValue = 0;
+  eleValue = 0;
 }
 
 function updateComplexity(algorithm) {
@@ -149,13 +170,26 @@ function updateComplexity(algorithm) {
     complexity[algorithm].space;
 }
 
+function updateStatsDisplay(algorithm) {
+  // Hide all stats initially
+  document.querySelectorAll(".stats-value p").forEach((stat) => {
+    stat.style.display = "none";
+  });
+
+  // Show relevant stats for the selected algorithm
+  statsVisibility[algorithm].forEach((id) => {
+    document.getElementById(id).parentElement.style.display = "block";
+  });
+}
+
 // Searching Algorithms
 function linearSearch(arr, target) {
   const bars = document.querySelectorAll(".box");
   const indices = document.querySelectorAll(".index");
   let isFound = false;
   for (let i = 0; i < arr.length; i++) {
-    tl.set(iValueEle, { textContent: ivalue++ });
+    tl.set(eleValueEle, { textContent: arr[i] });
+    tl.set(iValueEle, { textContent: iValue++ });
     tl.call(() => highlightLines([1]));
     // Highlight the current bar being compared
     tl.set(indices[i], {
@@ -185,6 +219,9 @@ function linearSearch(arr, target) {
       break; // Stop the search once the target is found
     } else {
       // Revert the color of the bar if not the target
+      tl.set(outputDisplay, {
+        innerHTML: target + " is not equal to " + arr[i],
+      });
       tl.to(bars[i], { backgroundColor: "#333", duration: 0.25 }, ">");
     }
     tl.set(indices[i], {
@@ -272,6 +309,13 @@ function binarySearch(arr, target) {
     } else if (arr[mid] < target) {
       // Search in the right half
       tl.call(() => highlightLines([6]));
+      tl.set(outputDisplay, {
+        innerHTML:
+          target +
+          " is greater than " +
+          arr[mid] +
+          "<br>Search in the right half",
+      });
       tl.to(bars[mid], { backgroundColor: "#333", duration: 0.25 }, ">");
       for (let i = low; i <= mid; i++) {
         tl.to(bars[i], { backgroundColor: "#333", duration: 0.25 }, ">");
@@ -300,6 +344,14 @@ function binarySearch(arr, target) {
     } else {
       // Search in the left half
       tl.call(() => highlightLines([8]));
+
+      tl.set(outputDisplay, {
+        innerHTML:
+          target +
+          " is lesser than " +
+          arr[mid] +
+          "<br>Search in the left half",
+      });
       tl.to(bars[mid], { backgroundColor: "#333", duration: 0.25 }, ">");
       for (let i = mid; i <= high; i++) {
         tl.to(bars[i], { backgroundColor: "#333", duration: 0.25 }, ">");
@@ -338,6 +390,7 @@ function binarySearch(arr, target) {
 algorithmDropdown.addEventListener("change", () => {
   restartTimeline();
   tl.clear();
+  resetStats();
 
   // Reset the array variable
   myArray = originalArray;
@@ -345,8 +398,10 @@ algorithmDropdown.addEventListener("change", () => {
   console.log("after reset: " + myArray);
   myArray.sort((a, b) => a - b);
   renderBoxes();
-  updateComplexity(algorithmDropdown.value);
-  renderCode(algorithmDropdown.value);
+  const selectedAlgorithm = algorithmDropdown.value;
+  updateComplexity(selectedAlgorithm);
+  updateStatsDisplay(selectedAlgorithm);
+  renderCode(selectedAlgorithm);
 });
 
 randomizeBtn.addEventListener("click", () => {
@@ -396,6 +451,7 @@ restartBtn.addEventListener("click", restartTimeline);
 searchBtn.addEventListener("click", () => {
   restartTimeline();
   tl.clear();
+  resetStats();
   renderBoxes();
   runSelectedAlgorithm();
   playPauseIcon.classList.remove("fa-play");
@@ -430,6 +486,7 @@ originalArray = [...myArray];
 renderBoxes();
 renderCode(algorithmDropdown.value);
 updateComplexity(algorithmDropdown.value);
+updateStatsDisplay(algorithmDropdown.value);
 
 // Create Timeline
 let tl = gsap.timeline({

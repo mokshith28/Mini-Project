@@ -52,6 +52,7 @@
 
 .output {
   display: flex;
+  line-height: 2;
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
   height: 120px; /* Set a fixed height if necessary */

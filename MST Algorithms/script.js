@@ -437,3 +437,5 @@ let tl = gsap.timeline({
     playPauseIcon.classList.add("fa-play");
   },
 });
+
+renderCode(algorithmDropdown.value);
