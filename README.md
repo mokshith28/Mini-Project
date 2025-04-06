@@ -1,4 +1,4 @@
-#**Mini-Project** 
+# Mini-Project 
 
 **Title:**<br>
 Interactive Algorithm Visualizing Web App
